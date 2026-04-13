@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WanderLog</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: #0f172a;
+    color: white;
+    scroll-behavior: smooth;
+}
+
+/* NAVBAR */
+nav {
+    position: sticky;
+    top: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 30px;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(10px);
+}
+
+nav a {
+    color: white;
+    margin-left: 20px;
+    text-decoration: none;
+}
+
+/* HERO */
+.hero {
+    height: 80vh;
+    background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e') center/cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    font-weight: bold;
+}
+
+/* SECTIONS */
+.section {
+    padding: 50px 20px;
+}
+
+/* BLOG CARD */
+.blog {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.blog img {
+    width: 300px;
+    border-radius: 15px;
+}
+
+/* CARD EFFECT */
+.blog img:hover {
+    transform: scale(1.05);
+    transition: 0.3s;
+}
+
+/* BACK TO TOP */
+#topBtn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px;
+    border: none;
+    border-radius: 50%;
+    background: #38bdf8;
+    cursor: pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav>
+<div>🌍 WanderLog</div>
+<div>
+<a href="#home">Home</a>
+<a href="#blogs">Blogs</a>
+<a href="#contact">Contact</a>
+</div>
+</nav>
+
+<!-- HERO -->
+<div class="hero" id="home">
+Explore The World ✈️
+</div>
+
+<!-- BLOGS -->
+<div class="section" id="blogs">
+
+<h2>Travel Stories</h2>
+
+<div class="blog">
+<img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470">
+<div>
+<h3>Trip to Mountains</h3>
+<p>Experience the beauty of nature with breathtaking mountain views and fresh air.</p>
+</div>
+</div>
+
+<div class="blog">
+<img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e">
+<div>
+<h3>Beach Adventure</h3>
+<p>Relax by the sea and enjoy the calming waves and sunset views.</p>
+</div>
+</div>
+
+<div class="blog">
+<img src="https://images.unsplash.com/photo-1491553895911-0055eca6402d">
+<div>
+<h3>City Lights</h3>
+<p>Discover the vibrant life of the city with its lights, culture, and energy.</p>
+</div>
+</div>
+
+</div>
+
+<!-- CONTACT -->
+<div class="section" id="contact">
+<h2>Contact</h2>
+<p>Email: traveler@email.com</p>
+</div>
+
+<button id="topBtn" onclick="scrollTop()">⬆️</button>
+
+<script>
+function scrollTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>
