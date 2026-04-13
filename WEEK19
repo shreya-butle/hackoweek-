@@ -1,0 +1,1042 @@
+<!doctype html>
+
+
+2	+
+<html lang="en" class="h-full">
+3	+
+ <head>
+4	+
+  <meta charset="UTF-8">
+5	+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+6	+
+  <title>Playlist Shuffle System</title>
+7	+
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+8	+
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+9	+
+  <script src="/_sdk/element_sdk.js"></script>
+10	+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&amp;family=Inter:wght@400;500&amp;display=swap" rel="stylesheet">
+11	+
+  <script>
+12	+
+tailwind.config = {
+13	+
+  theme: {
+14	+
+    extend: {
+15	+
+      fontFamily: {
+16	+
+        heading: ['Poppins', 'sans-serif'],
+17	+
+        body: ['Inter', 'sans-serif']
+18	+
+      }
+19	+
+    }
+20	+
+  }
+21	+
+}
+22	+
+</script>
+23	+
+  <style>
+24	+
+html, body { height: 100%; margin: 0; }
+25	+
+* { scroll-behavior: smooth; }
+26	+
+27	+
+body {
+28	+
+  background: linear-gradient(135deg, #0a0e27 0%, #1a1a3e 25%, #2d0a4e 50%, #1a0f2e 75%, #0a0e27 100%);
+29	+
+  color: #e2e8f0;
+30	+
+  overflow-x: hidden;
+31	+
+  position: relative;
+32	+
+}
+33	+
+34	+
+body::before {
+35	+
+  content: '';
+36	+
+  position: fixed;
+37	+
+  top: 0;
+38	+
+  left: 0;
+39	+
+  right: 0;
+40	+
+  bottom: 0;
+41	+
+  background: 
+42	+
+    radial-gradient(circle at 20% 50%, rgba(236, 72, 153, 0.1) 0%, transparent 50%),
+43	+
+    radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+44	+
+    radial-gradient(circle at 40% 20%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+45	+
+  pointer-events: none;
+46	+
+  z-index: 0;
+47	+
+}
+48	+
+49	+
+#app-wrapper { position: relative; z-index: 1; }
+50	+
+51	+
+@keyframes fadeUp {
+52	+
+  from { opacity: 0; transform: translateY(40px); }
+53	+
+  to { opacity: 1; transform: translateY(0); }
+54	+
+}
+55	+
+56	+
+@keyframes beatPulse {
+57	+
+  0%, 100% { transform: scale(1); }
+58	+
+  50% { transform: scale(1.1); }
+59	+
+}
+60	+
+61	+
+@keyframes float {
+62	+
+  0%, 100% { transform: translateY(0px); }
+63	+
+  50% { transform: translateY(-10px); }
+64	+
+}
+65	+
+66	+
+.anim-fade-up { animation: fadeUp 0.8s ease both; }
+67	+
+.anim-fade-up-1 { animation: fadeUp 0.8s 0.1s ease both; }
+68	+
+.anim-fade-up-2 { animation: fadeUp 0.8s 0.2s ease both; }
+69	+
+.anim-beat { animation: beatPulse 0.6s ease-in-out infinite; }
+70	+
+71	+
+.reveal { opacity: 0; transform: translateY(30px); transition: all 0.7s ease; }
+72	+
+.reveal.visible { opacity: 1; transform: translateY(0); }
+73	+
+74	+
+.feature-item {
+75	+
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(236, 72, 153, 0.08) 100%);
+76	+
+  border: 2px solid rgba(139, 92, 246, 0.4);
+77	+
+  transition: all 0.3s ease;
+78	+
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2);
+79	+
+}
+80	+
+81	+
+.feature-item:hover {
+82	+
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(236, 72, 153, 0.15) 100%);
+83	+
+  transform: translateY(-5px);
+84	+
+  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.35);
+85	+
+  border-color: rgba(236, 72, 153, 0.6);
+86	+
+}
+87	+
+88	+
+.dll-diagram {
+89	+
+  background: linear-gradient(135deg, rgba(30, 27, 60, 0.9) 0%, rgba(45, 10, 78, 0.9) 100%);
+90	+
+  border: 2px solid rgba(139, 92, 246, 0.5);
+91	+
+  border-radius: 12px;
+92	+
+  padding: 32px;
+93	+
+  position: relative;
+94	+
+}
+95	+
+96	+
+.song-node {
+97	+
+  display: flex;
+98	+
+  flex-direction: column;
+99	+
+  align-items: center;
+100	+
+  justify-content: center;
+101	+
+  width: 70px;
+102	+
+  height: 70px;
+103	+
+  background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
+104	+
+  border-radius: 12px;
+105	+
+  color: white;
+106	+
+  font-weight: 700;
+107	+
+  font-size: 11px;
+108	+
+  box-shadow: 0 6px 20px rgba(236, 72, 153, 0.4);
+109	+
+  position: relative;
+110	+
+  border: 2px solid rgba(255, 255, 255, 0.3);
+111	+
+  animation: float 3s ease-in-out infinite;
+112	+
+}
+113	+
+114	+
+.song-node.alt {
+115	+
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+116	+
+  animation-delay: 0.5s;
+117	+
+}
+118	+
+119	+
+.song-node.alt2 {
+120	+
+  background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+121	+
+  animation-delay: 1s;
+122	+
+}
+123	+
+124	+
+.arrow-double {
+125	+
+  width: 60px;
+126	+
+  height: 3px;
+127	+
+  background: linear-gradient(90deg, rgba(139, 92, 246, 0.5) 0%, rgba(139, 92, 246, 0.2) 100%);
+128	+
+  position: relative;
+129	+
+}
+130	+
+131	+
+.arrow-double::before,
+132	+
+.arrow-double::after {
+133	+
+  content: '';
+134	+
+  position: absolute;
+135	+
+  width: 8px;
+136	+
+  height: 8px;
+137	+
+  background: rgba(139, 92, 246, 0.6);
+138	+
+  border-radius: 50%;
+139	+
+  top: 50%;
+140	+
+  transform: translateY(-50%);
+141	+
+}
+142	+
+143	+
+.arrow-double::before { left: 0; }
+144	+
+.arrow-double::after { right: 0; }
+145	+
+146	+
+.operation-box {
+147	+
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.12) 0%, rgba(59, 130, 246, 0.08) 100%);
+148	+
+  border-left: 4px solid;
+149	+
+  padding: 16px;
+150	+
+  border-radius: 8px;
+151	+
+  margin-bottom: 12px;
+152	+
+  transition: all 0.3s ease;
+153	+
+}
+154	+
+155	+
+.operation-box:hover {
+156	+
+  transform: translateX(4px);
+157	+
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+158	+
+}
+159	+
+160	+
+.operation-box.add {
+161	+
+  border-left-color: #10b981;
+162	+
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%);
+163	+
+}
+164	+
+165	+
+.operation-box.delete {
+166	+
+  border-left-color: #ef4444;
+167	+
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(239, 68, 68, 0.05) 100%);
+168	+
+}
+169	+
+170	+
+.operation-box.traverse {
+171	+
+  border-left-color: #3b82f6;
+172	+
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.05) 100%);
+173	+
+}
+174	+
+175	+
+.operation-box.shuffle {
+176	+
+  border-left-color: #ec4899;
+177	+
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.15) 0%, rgba(236, 72, 153, 0.05) 100%);
+178	+
+}
+179	+
+180	+
+.playlist-card {
+181	+
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(236, 72, 153, 0.1) 100%);
+182	+
+  border: 1px solid rgba(139, 92, 246, 0.3);
+183	+
+  border-radius: 10px;
+184	+
+  padding: 12px;
+185	+
+  display: flex;
+186	+
+  align-items: center;
+187	+
+  gap: 12px;
+188	+
+  transition: all 0.3s ease;
+189	+
+  cursor: pointer;
+190	+
+}
+191	+
+192	+
+.playlist-card:hover {
+193	+
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(236, 72, 153, 0.2) 100%);
+194	+
+  border-color: rgba(236, 72, 153, 0.5);
+195	+
+  transform: translateX(4px);
+196	+
+}
+197	+
+198	+
+.song-icon {
+199	+
+  width: 40px;
+200	+
+  height: 40px;
+201	+
+  background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
+202	+
+  border-radius: 8px;
+203	+
+  display: flex;
+204	+
+  align-items: center;
+205	+
+  justify-content: center;
+206	+
+  flex-shrink: 0;
+207	+
+}
+208	+
+209	+
+@media (max-width: 768px) {
+210	+
+  .dll-diagram { padding: 16px; }
+211	+
+  .song-node { width: 50px; height: 50px; font-size: 9px; }
+212	+
+}
+213	+
+</style>
+214	+
+  <style>body { box-sizing: border-box; }</style>
+215	+
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+216	+
+ </head>
+217	+
+ <body class="h-full font-body">
+218	+
+  <div id="app-wrapper" class="w-full h-full overflow-auto">
+219	+
+   <!-- Header -->
+220	+
+   <header class="relative w-full pt-16 pb-12 text-center overflow-hidden">
+221	+
+    <div class="relative z-10">
+222	+
+     <p class="anim-fade-up text-xs tracking-[0.15em] text-pink-400 uppercase font-bold mb-3 flex items-center justify-center gap-2"><i data-lucide="music" style="width:16px;height:16px"></i> [ Music Data Structures ] <i data-lucide="music" style="width:16px;height:16px"></i></p>
+223	+
+     <h1 id="project-title" class="anim-fade-up-1 font-heading text-5xl md:text-6xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent mb-2">Playlist Shuffle</h1>
+224	+
+     <p class="anim-fade-up-2 text-lg md:text-xl text-purple-300 font-semibold">(Doubly Linked List)</p>
+225	+
+    </div>
+226	+
+   </header><!-- Concept Section -->
+227	+
+   <section class="w-full py-16 px-6">
+228	+
+    <div class="max-w-5xl mx-auto">
+229	+
+     <div class="reveal bg-gradient-to-r from-purple-900 to-pink-900 rounded-lg p-8 md:p-12 shadow-lg border border-purple-500 border-opacity-50">
+230	+
+      <div class="flex items-start gap-4 mb-6">
+231	+
+       <i data-lucide="music-2" class="text-pink-400 flex-shrink-0 anim-beat" style="width:28px;height:28px"></i>
+232	+
+       <div>
+233	+
+        <p class="text-xs tracking-widest text-pink-400 uppercase font-bold mb-2">Concept</p>
+234	+
+        <p id="concept-desc" class="text-slate-100 text-lg leading-relaxed font-body">Manage a dynamic music playlist using a doubly linked list where each node stores a song with forward and backward pointers for seamless bidirectional navigation and shuffle operations.</p>
+235	+
+       </div>
+236	+
+      </div>
+237	+
+     </div>
+238	+
+    </div>
+239	+
+   </section><!-- Features Section -->
+240	+
+   <section class="w-full py-16 px-6 bg-gradient-to-b from-transparent to-purple-950 bg-opacity-30">
+241	+
+    <div class="max-w-5xl mx-auto">
+242	+
+     <p class="text-xs tracking-widest text-purple-400 uppercase font-bold mb-8 text-center">[ Key Features ]</p>
+243	+
+     <div class="grid md:grid-cols-2 gap-6">
+244	+
+      <div class="reveal feature-item rounded-lg p-6">
+245	+
+       <div class="flex items-center gap-3 mb-3">
+246	+
+        <i data-lucide="plus-circle" class="text-green-400" style="width:20px;height:20px"></i> <span class="text-green-300 font-bold text-sm">Add Songs</span>
+247	+
+       </div>
+248	+
+       <p class="text-slate-300 text-sm">Insert songs at front or end of playlist instantly</p>
+249	+
+      </div>
+250	+
+      <div class="reveal feature-item rounded-lg p-6" style="animation-delay: 0.1s">
+251	+
+       <div class="flex items-center gap-3 mb-3">
+252	+
+        <i data-lucide="trash-2" class="text-red-400" style="width:20px;height:20px"></i> <span class="text-red-300 font-bold text-sm">Delete Songs</span>
+253	+
+       </div>
+254	+
+       <p class="text-slate-300 text-sm">Remove songs by position with smooth playlist updates</p>
+255	+
+      </div>
+256	+
+      <div class="reveal feature-item rounded-lg p-6" style="animation-delay: 0.2s">
+257	+
+       <div class="flex items-center gap-3 mb-3">
+258	+
+        <i data-lucide="arrow-left-right" class="text-blue-400" style="width:20px;height:20px"></i> <span class="text-blue-300 font-bold text-sm">Bidirectional Traversal</span>
+259	+
+       </div>
+260	+
+       <p class="text-slate-300 text-sm">Navigate forward and backward through playlist freely</p>
+261	+
+      </div>
+262	+
+      <div class="reveal feature-item rounded-lg p-6" style="animation-delay: 0.3s">
+263	+
+       <div class="flex items-center gap-3 mb-3">
+264	+
+        <i data-lucide="shuffle" class="text-pink-400" style="width:20px;height:20px"></i> <span class="text-pink-300 font-bold text-sm">Shuffle &amp; Reverse</span>
+265	+
+       </div>
+266	+
+       <p class="text-slate-300 text-sm">Randomize or reverse playlist with DLL pointers</p>
+267	+
+      </div>
+268	+
+     </div>
+269	+
+    </div>
+270	+
+   </section><!-- DLL Visualization -->
+271	+
+   <section class="w-full py-16 px-6">
+272	+
+    <div class="max-w-5xl mx-auto">
+273	+
+     <p class="text-xs tracking-widest text-purple-400 uppercase font-bold mb-12 text-center">[ Doubly Linked List Structure ]</p>
+274	+
+     <div class="grid md:grid-cols-2 gap-12 items-center">
+275	+
+      <!-- DLL Diagram -->
+276	+
+      <div class="reveal flex justify-center overflow-x-auto">
+277	+
+       <div class="dll-diagram flex flex-col items-center justify-center gap-8 min-w-max" style="min-height: 300px;">
+278	+
+        <p class="text-purple-300 text-xs font-semibold text-center w-full">Song1 ↔ Song2 ↔ Song3 ↔ Song4</p><!-- DLL nodes -->
+279	+
+        <div class="flex gap-4 items-center justify-center flex-wrap">
+280	+
+         <div class="song-node"><i data-lucide="music" style="width:24px;height:24px;margin-bottom:2px"></i> <span style="font-size:10px;margin-top:2px">S1</span>
+281	+
+         </div>
+282	+
+         <div class="arrow-double"></div>
+283	+
+         <div class="song-node alt"><i data-lucide="music" style="width:24px;height:24px;margin-bottom:2px"></i> <span style="font-size:10px;margin-top:2px">S2</span>
+284	+
+         </div>
+285	+
+         <div class="arrow-double"></div>
+286	+
+         <div class="song-node alt2"><i data-lucide="music" style="width:24px;height:24px;margin-bottom:2px"></i> <span style="font-size:10px;margin-top:2px">S3</span>
+287	+
+         </div>
+288	+
+         <div class="arrow-double"></div>
+289	+
+         <div class="song-node"><i data-lucide="music" style="width:24px;height:24px;margin-bottom:2px"></i> <span style="font-size:10px;margin-top:2px">S4</span>
+290	+
+         </div>
+291	+
+        </div>
+292	+
+        <p class="text-purple-300 text-xs font-semibold text-center">Circular or Null-terminated DLL</p>
+293	+
+       </div>
+294	+
+      </div><!-- Playlist Preview -->
+295	+
+      <div class="reveal" style="animation-delay: 0.1s">
+296	+
+       <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-lg p-8 shadow-lg border border-purple-500 border-opacity-30">
+297	+
+        <p class="text-xs tracking-widest text-purple-400 uppercase font-bold mb-6">Sample Playlist</p>
+298	+
+        <div class="space-y-3">
+299	+
+         <div class="playlist-card">
+300	+
+          <div class="song-icon">
+301	+
+           <i data-lucide="music" style="width:20px;height:20px;color:white"></i>
+302	+
+          </div>
+303	+
+          <div class="flex-1 min-w-0">
+304	+
+           <p class="text-purple-200 font-semibold text-sm truncate">Midnight Dreams</p>
+305	+
+           <p class="text-slate-400 text-xs">Artist Name • 3:45</p>
+306	+
+          </div><i data-lucide="play" class="text-pink-400 flex-shrink-0" style="width:18px;height:18px"></i>
+307	+
+         </div>
+308	+
+         <div class="playlist-card">
+309	+
+          <div class="song-icon" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);">
+310	+
+           <i data-lucide="music" style="width:20px;height:20px;color:white"></i>
+311	+
+          </div>
+312	+
+          <div class="flex-1 min-w-0">
+313	+
+           <p class="text-purple-200 font-semibold text-sm truncate">Neon Nights</p>
+314	+
+           <p class="text-slate-400 text-xs">Artist Name • 4:12</p>
+315	+
+          </div><i data-lucide="pause" class="text-pink-400 flex-shrink-0" style="width:18px;height:18px"></i>
+316	+
+         </div>
+317	+
+         <div class="playlist-card">
+318	+
+          <div class="song-icon" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);">
+319	+
+           <i data-lucide="music" style="width:20px;height:20px;color:white"></i>
+320	+
+          </div>
+321	+
+          <div class="flex-1 min-w-0">
+322	+
+           <p class="text-purple-200 font-semibold text-sm truncate">Cosmic Journey</p>
+323	+
+           <p class="text-slate-400 text-xs">Artist Name • 5:08</p>
+324	+
+          </div><i data-lucide="play" class="text-pink-400 flex-shrink-0" style="width:18px;height:18px"></i>
+325	+
+         </div>
+326	+
+        </div>
+327	+
+       </div>
+328	+
+      </div>
+329	+
+     </div>
+330	+
+    </div>
+331	+
+   </section><!-- Operations Section -->
+332	+
+   <section class="w-full py-16 px-6 bg-gradient-to-b from-transparent to-pink-950 bg-opacity-20">
+333	+
+    <div class="max-w-5xl mx-auto">
+334	+
+     <p class="text-xs tracking-widest text-pink-400 uppercase font-bold mb-12 text-center">[ DLL Operations ]</p>
+335	+
+     <div class="grid md:grid-cols-2 gap-8">
+336	+
+      <div>
+337	+
+       <h3 class="text-lg font-bold text-purple-300 mb-4 flex items-center gap-2"><i data-lucide="plus" style="width:20px;height:20px"></i> Add Operations</h3>
+338	+
+       <div class="space-y-3">
+339	+
+        <div class="operation-box add">
+340	+
+         <div class="flex items-start gap-3">
+341	+
+          <i data-lucide="arrow-down" class="text-green-400 flex-shrink-0 mt-1" style="width:18px;height:18px"></i>
+342	+
+          <div>
+343	+
+           <p class="text-green-300 font-bold text-sm">Insert at Front</p>
+344	+
+           <p class="text-slate-400 text-xs mt-1">Update prev pointer of head node</p>
+345	+
+          </div>
+346	+
+         </div>
+347	+
+        </div>
+348	+
+        <div class="operation-box add">
+349	+
+         <div class="flex items-start gap-3">
+350	+
+          <i data-lucide="arrow-up" class="text-green-400 flex-shrink-0 mt-1" style="width:18px;height:18px"></i>
+351	+
+          <div>
+352	+
+           <p class="text-green-300 font-bold text-sm">Insert at End</p>
+353	+
+           <p class="text-slate-400 text-xs mt-1">Update next pointer of tail node</p>
+354	+
+          </div>
+355	+
+         </div>
+356	+
+        </div>
+357	+
+       </div>
+358	+
+      </div>
+359	+
+      <div>
+360	+
+       <h3 class="text-lg font-bold text-red-300 mb-4 flex items-center gap-2"><i data-lucide="trash-2" style="width:20px;height:20px"></i> Delete Operations</h3>
+361	+
+       <div class="space-y-3">
+362	+
+        <div class="operation-box delete">
+363	+
+         <div class="flex items-start gap-3">
+364	+
+          <i data-lucide="minus" class="text-red-400 flex-shrink-0 mt-1" style="width:18px;height:18px"></i>
+365	+
+          <div>
+366	+
+           <p class="text-red-300 font-bold text-sm">Remove by Position</p>
+367	+
+           <p class="text-slate-400 text-xs mt-1">Traverse and update both pointers</p>
+368	+
+          </div>
+369	+
+         </div>
+370	+
+        </div>
+371	+
+        <div class="operation-box delete">
+372	+
+         <div class="flex items-start gap-3">
+373	+
+          <i data-lucide="x" class="text-red-400 flex-shrink-0 mt-1" style="width:18px;height:18px"></i>
+374	+
+          <div>
+375	+
+           <p class="text-red-300 font-bold text-sm">Remove Song Node</p>
+376	+
+           <p class="text-slate-400 text-xs mt-1">Unlink prev and next references</p>
+377	+
+          </div>
+378	+
+         </div>
+379	+
+        </div>
+380	+
+       </div>
+381	+
+      </div>
+382	+
+      <div>
+383	+
+       <h3 class="text-lg font-bold text-blue-300 mb-4 flex items-center gap-2"><i data-lucide="arrow-left-right" style="width:20px;height:20px"></i> Traversal</h3>
+384	+
+       <div class="space-y-3">
+385	+
+        <div class="operation-box traverse">
+386	+
+         <div class="flex items-start gap-3">
+387	+
+          <i data-lucide="arrow-right" class="text-blue-400 flex-shrink-0 mt-1" style="width:18px;height:18px"></i>
+388	+
+          <div>
+389	+
+           <p class="text-blue-300 font-bold text-sm">Forward Navigation</p>
+390	+
+           <p class="text-slate-400 text-xs mt-1">Follow next pointers from head</p>
+391	+
+          </div>
+392	+
+         </div>
+393	+
+        </div>
+394	+
+        <div class="operation-box traverse">
+395	+
+         <div class="flex items-start gap-3">
+396	+
+          <i data-lucide="arrow-left" class="text-blue-400 flex-shrink-0 mt-1" style="width:18px;height:18px"></i>
+397	+
+          <div>
+398	+
+           <p class="text-blue-300 font-bold text-sm">Backward Navigation</p>
+399	+
+           <p class="text-slate-400 text-xs mt-1">Follow prev pointers from tail</p>
+400	+
+          </div>
+401	+
+         </div>
+402	+
+        </div>
+403	+
+       </div>
+404	+
+      </div>
+405	+
+      <div>
+406	+
+       <h3 class="text-lg font-bold text-pink-300 mb-4 flex items-center gap-2"><i data-lucide="shuffle" style="width:20px;height:20px"></i> Special Operations</h3>
+407	+
+       <div class="space-y-3">
+408	+
+        <div class="operation-box shuffle">
+409	+
+         <div class="flex items-start gap-3">
+410	+
+          <i data-lucide="shuffle" class="text-pink-400 flex-shrink-0 mt-1" style="width:18px;height:18px"></i>
+411	+
+          <div>
+412	+
+           <p class="text-pink-300 font-bold text-sm">Shuffle Playlist</p>
+413	+
+           <p class="text-slate-400 text-xs mt-1">Randomize order using both pointers</p>
+414	+
+          </div>
+415	+
+         </div>
+416	+
+        </div>
+417	+
+        <div class="operation-box shuffle">
+418	+
+         <div class="flex items-start gap-3">
+419	+
+          <i data-lucide="rotate-ccw" class="text-pink-400 flex-shrink-0 mt-1" style="width:18px;height:18px"></i>
+420	+
+          <div>
+421	+
+           <p class="text-pink-300 font-bold text-sm">Reverse Order</p>
+422	+
+           <p class="text-slate-400 text-xs mt-1">Swap next and prev pointers</p>
+423	+
+          </div>
+424	+
+         </div>
+425	+
+        </div>
+426	+
+       </div>
+427	+
+      </div>
+428	+
+     </div>
+429	+
+    </div>
+430	+
+   </section><!-- Use Case Section -->
+431	+
+   <section class="w-full py-16 px-6">
+432	+
+    <div class="max-w-5xl mx-auto">
+433	+
+     <p class="text-xs tracking-widest text-pink-400 uppercase font-bold mb-8">[ Real-World Use Case ]</p>
+434	+
+     <div class="reveal bg-gradient-to-r from-pink-600 via-purple-600 to-blue-600 rounded-lg p-1">
+435	+
+      <div class="bg-slate-900 rounded-lg p-8">
+436	+
+       <div class="flex items-start gap-6">
+437	+
+        <div class="flex-shrink-0"><i data-lucide="headphones" class="text-pink-400" style="width:40px;height:40px"></i>
+438	+
+        </div>
+439	+
+        <div>
+440	+
+         <p id="use-case-text" class="text-slate-200 text-base leading-relaxed"><strong class="text-pink-400">Music Streaming Platforms:</strong> Spotify, Apple Music, and YouTube Music use doubly linked lists for playlist management. Songs can be played forward or backward, inserted/removed efficiently, and shuffled randomly. The bidirectional navigation allows users to skip backward through played songs while maintaining the original playlist structure for future playback.</p>
+441	+
+        </div>
+442	+
+       </div>
+443	+
+      </div>
+444	+
+     </div>
+445	+
+    </div>
+446	+
+   </section><!-- Technical Stack -->
+447	+
+   <section class="w-full py-16 px-6 bg-slate-800 bg-opacity-50">
+448	+
+    <div class="max-w-5xl mx-auto">
+449	+
+     <p class="text-xs tracking-widest text-purple-400 uppercase font-bold mb-8">[ Technical Stack ]</p>
+450	+
+     <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4">
+451	+
+      <div class="reveal bg-gradient-to-br from-purple-900 to-purple-800 rounded-lg p-6 text-center shadow-md hover:shadow-lg transition-shadow border border-purple-600 border-opacity-50">
+452	+
+       <i data-lucide="code" class="text-purple-300 mx-auto mb-3" style="width:28px;height:28px"></i>
+453	+
+       <p class="text-sm font-bold text-slate-200">C Language</p>
+454	+
+      </div>
+455	+
+      <div class="reveal bg-gradient-to-br from-pink-900 to-pink-800 rounded-lg p-6 text-center shadow-md hover:shadow-lg transition-shadow border border-pink-600 border-opacity-50" style="animation-delay: 0.05s">
+456	+
+       <i data-lucide="link" class="text-pink-300 mx-auto mb-3" style="width:28px;height:28px"></i>
+457	+
+       <p class="text-sm font-bold text-slate-200">Doubly Linked List</p>
+458	+
+      </div>
+459	+
+      <div class="reveal bg-gradient-to-br from-blue-900 to-blue-800 rounded-lg p-6 text-center shadow-md hover:shadow-lg transition-shadow border border-blue-600 border-opacity-50" style="animation-delay: 0.1s">
+460	+
+       <i data-lucide="music" class="text-blue-300 mx-auto mb-3" style="width:28px;height:28px"></i>
+461	+
+       <p class="text-sm font-bold text-slate-200">Playlist Management</p>
+462	+
+      </div>
+463	+
+      <div class="reveal bg-gradient-to-br from-cyan-900 to-cyan-800 rounded-lg p-6 text-center shadow-md hover:shadow-lg transition-shadow border border-cyan-600 border-opacity-50" style="animation-delay: 0.15s">
+464	+
+       <i data-lucide="shuffle" class="text-cyan-300 mx-auto mb-3" style="width:28px;height:28px"></i>
+465	+
+       <p class="text-sm font-bold text-slate-200">Shuffle Algorithm</p>
+466	+
+      </div>
+467	+
+     </div>
+468	+
+    </div>
+469	+
+   </section><!-- Footer -->
+470	+
+   <footer class="w-full bg-gradient-to-r from-purple-900 via-pink-900 to-blue-900 border-t border-purple-500 border-opacity-50 mt-20 py-12 px-6">
+471	+
+    <div class="max-w-5xl mx-auto">
+472	+
+     <div class="text-center">
+473	+
+      <div class="mb-4 pb-4 border-b border-purple-500 border-opacity-50">
+474	+
+       <p class="text-pink-400 text-sm font-semibold mb-1">♪ ━━━━━━━━━━━━━━━━━ ♪</p>
+475	+
+       <p id="footer-student" class="text-slate-100 font-heading font-bold text-lg">Your Name</p>
+476	+
+       <p id="footer-course" class="text-slate-300 text-sm font-medium">BTech CSE | Semester 3</p>
+477	+
+       <p class="text-pink-400 text-sm font-semibold mt-1">♪ ━━━━━━━━━━━━━━━━━ ♪</p>
+478	+
+      </div>
+479	+
+      <p class="text-slate-400 text-xs">Data Structures &amp; Algorithms Project | Doubly Linked List Playlist Implementation</p>
+480	+
+     </div>
+481	+
+    </div>
+482	+
+   </footer>
+483	+
+  </div>
+484	+
+  <script>
+485	+
+const defaultConfig = {
+486	+
+  project_title: 'Playlist Shuffle (Doubly Linked List)',
+487	+
+  concept_text: 'Manage a dynamic music playlist using a doubly linked list where each node stores a song with forward and backward pointers for seamless bidirectional navigation and shuffle operations.',
+488	+
+  use_case_text: 'Music Streaming Platforms: Spotify, Apple Music, and YouTube Music use doubly linked lists for playlist management. Songs can be played forward or backward, inserted/removed efficiently, and shuffled randomly. The bidirectional navigation allows users to skip backward through played songs while maintaining the original playlist structure for future playback.',
+489	+
+  student_name: 'Your Name',
+490	+
+  course_details: 'BTech CSE | Semester 3'
+491	+
+};
+492	+
+493	+
+function applyConfig(config) {
+494	+
+  const c = { ...defaultConfig, ...config };
+495	+
+  const el = (id) => document.getElementById(id);
+496	+
+497	+
+  if (el('project-title')) el('project-title').textContent = c.project_title;
+498	+
+  if (el('concept-desc')) el('concept-desc').textContent = c.concept_text;
+499	+
+  if (el('use-case-text')) el('use-case-text').innerHTML = '<strong class="text-pink-400">Music Streaming Platforms:</strong> ' + c.use_case_text.replace('Music Streaming Platforms: ', '');
+500	+
+  if (el('footer-student')) el('footer-student').textContent = c.student_name;
+501	+
+  if (el('footer-course')) el('footer-course').textContent = c.course_details;
+502	+
+}
+503	+
+504	+
+// Element SDK
+505	+
+window.elementSdk.init({
+506	+
+  defaultConfig,
+507	+
+  onConfigChange: async (config) => applyConfig(config),
+508	+
+  mapToCapabilities: (config) => ({
+509	+
+    recolorables: [],
+510	+
+    borderables: [],
+511	+
+    fontEditable: undefined,
+512	+
+    fontSizeable: undefined
+513	+
+  }),
+514	+
+  mapToEditPanelValues: (config) => new Map([
+515	+
+    ['project_title', config.project_title || defaultConfig.project_title],
+516	+
+    ['concept_text', config.concept_text || defaultConfig.concept_text],
+517	+
+    ['use_case_text', config.use_case_text || defaultConfig.use_case_text],
+518	+
+    ['student_name', config.student_name || defaultConfig.student_name],
+519	+
+    ['course_details', config.course_details || defaultConfig.course_details]
+520	+
+  ])
+521	+
+});
+522	+
+523	+
+// Scroll reveal animation
+524	+
+const observer = new IntersectionObserver((entries) => {
+525	+
+  entries.forEach(entry => {
+526	+
+    if (entry.isIntersecting) {
+527	+
+      entry.target.classList.add('visible');
+528	+
+    }
+529	+
+  });
+530	+
+}, { threshold: 0.1 });
+531	+
+532	+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+533	+
+534	+
+lucide.createIcons();
+535	+
+</script>
+536	+
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9ea96744c7f7af19',t:'MTc3NTkwNDM0NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+537	+
+</html>
