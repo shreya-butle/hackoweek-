@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CodeCraft Pro</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: #020617;
+    color: white;
+    scroll-behavior: smooth;
+}
+
+/* NAV */
+nav {
+    position: sticky;
+    top: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 30px;
+    background: rgba(0,0,0,0.7);
+}
+
+nav a {
+    color: white;
+    margin-left: 20px;
+    text-decoration: none;
+}
+
+/* HERO */
+.hero {
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg,#0f172a,#1e293b);
+    text-align: center;
+}
+
+.hero h1 {
+    font-size: 45px;
+}
+
+.hero button {
+    margin-top: 20px;
+    padding: 12px 25px;
+    background: #38bdf8;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+}
+
+/* SECTION */
+.section {
+    padding: 60px 20px;
+    text-align: center;
+}
+
+/* PREMIUM DEMO SECTION */
+.demo-box {
+    width: 80%;
+    margin: auto;
+    height: 300px;
+    border-radius: 20px;
+    background: linear-gradient(135deg,#1e293b,#334155);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* PLAY BUTTON */
+.play-btn {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #38bdf8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.play-btn:hover {
+    transform: scale(1.1);
+}
+
+/* TEXT */
+.demo-text {
+    position: absolute;
+    bottom: 15px;
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+/* CARDS */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+    gap: 20px;
+}
+
+.card {
+    background: #1e293b;
+    padding: 20px;
+    border-radius: 15px;
+}
+
+/* FORM */
+input {
+    padding: 10px;
+    margin: 10px;
+    border-radius: 10px;
+    border: none;
+}
+
+button {
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    background: #38bdf8;
+    cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+<div>💻 CodeCraft Pro</div>
+<div>
+<a href="#course">Course</a>
+<a href="#demo">Demo</a>
+<a href="#contact">Enroll</a>
+</div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+<h1>Become a Full Stack Developer 🚀</h1>
+<p>Build real-world projects & get job-ready</p>
+<button onclick="goEnroll()">Enroll Now</button>
+</div>
+
+<!-- DEMO SECTION (NO YOUTUBE) -->
+<div class="section" id="demo">
+<h2>Watch Demo</h2>
+
+<div class="demo-box">
+<div class="play-btn" onclick="showDemo()">▶</div>
+<div class="demo-text">Click to view course preview</div>
+</div>
+
+</div>
+
+<!-- COURSE -->
+<div class="section" id="course">
+<h2>Course Modules</h2>
+<div class="cards">
+<div class="card">HTML, CSS, JS</div>
+<div class="card">React Development</div>
+<div class="card">Backend Basics</div>
+</div>
+</div>
+
+<!-- CONTACT -->
+<div class="section" id="contact">
+<h2>Enroll Now</h2>
+<input type="text" placeholder="Name"><br>
+<input type="email" placeholder="Email"><br>
+<button onclick="submitForm()">Submit</button>
+</div>
+
+<script>
+function goEnroll(){
+    document.getElementById("contact").scrollIntoView({behavior:"smooth"});
+}
+
+function showDemo(){
+    alert("Demo video feature can be integrated here!");
+}
+
+function submitForm(){
+    alert("Successfully Registered!");
+}
+</script>
+
+</body>
+</html>
