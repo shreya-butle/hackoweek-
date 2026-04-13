@@ -1,0 +1,1325 @@
+<!doctype html>
+
+
+2	+
+<html lang="en" class="h-full">
+3	+
+ <head>
+4	+
+  <meta charset="UTF-8">
+5	+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+6	+
+  <title>Library Book Management System</title>
+7	+
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+8	+
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+9	+
+  <script src="/_sdk/element_sdk.js"></script>
+10	+
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&amp;family=Source+Sans+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+11	+
+  <script>
+12	+
+tailwind.config = {
+13	+
+  theme: {
+14	+
+    extend: {
+15	+
+      fontFamily: {
+16	+
+        heading: ['Lora', 'serif'],
+17	+
+        body: ['Source Sans Pro', 'sans-serif']
+18	+
+      }
+19	+
+    }
+20	+
+  }
+21	+
+}
+22	+
+</script>
+23	+
+  <style>
+24	+
+html, body { height: 100%; margin: 0; }
+25	+
+* { scroll-behavior: smooth; }
+26	+
+27	+
+body {
+28	+
+  background: linear-gradient(180deg, #f8fafb 0%, #eef2f7 50%, #f3f6fb 100%);
+29	+
+  color: #2c3e50;
+30	+
+  overflow-x: hidden;
+31	+
+  position: relative;
+32	+
+}
+33	+
+34	+
+body::before {
+35	+
+  content: '';
+36	+
+  position: fixed;
+37	+
+  top: 0;
+38	+
+  left: 0;
+39	+
+  right: 0;
+40	+
+  bottom: 0;
+41	+
+  background: 
+42	+
+    radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.04) 0%, transparent 50%),
+43	+
+    radial-gradient(circle at 80% 30%, rgba(100, 116, 139, 0.03) 0%, transparent 50%),
+44	+
+    radial-gradient(circle at 60% 80%, rgba(59, 130, 246, 0.02) 0%, transparent 50%);
+45	+
+  pointer-events: none;
+46	+
+  z-index: 0;
+47	+
+}
+48	+
+49	+
+#app-wrapper { position: relative; z-index: 1; }
+50	+
+51	+
+@keyframes fadeUp {
+52	+
+  from { opacity: 0; transform: translateY(40px); }
+53	+
+  to { opacity: 1; transform: translateY(0); }
+54	+
+}
+55	+
+56	+
+@keyframes slideInRight {
+57	+
+  from { opacity: 0; transform: translateX(40px); }
+58	+
+  to { opacity: 1; transform: translateX(0); }
+59	+
+}
+60	+
+61	+
+@keyframes slideInLeft {
+62	+
+  from { opacity: 0; transform: translateX(-40px); }
+63	+
+  to { opacity: 1; transform: translateX(0); }
+64	+
+}
+65	+
+66	+
+@keyframes softGlow {
+67	+
+  0%, 100% { box-shadow: 0 4px 16px rgba(59, 130, 246, 0.08); }
+68	+
+  50% { box-shadow: 0 8px 24px rgba(59, 130, 246, 0.12); }
+69	+
+}
+70	+
+71	+
+.anim-fade-up { animation: fadeUp 0.8s ease both; }
+72	+
+.anim-fade-up-1 { animation: fadeUp 0.8s 0.1s ease both; }
+73	+
+.anim-fade-up-2 { animation: fadeUp 0.8s 0.2s ease both; }
+74	+
+.anim-fade-up-3 { animation: fadeUp 0.8s 0.3s ease both; }
+75	+
+.anim-slide-right { animation: slideInRight 0.7s ease both; }
+76	+
+.anim-slide-left { animation: slideInLeft 0.7s ease both; }
+77	+
+78	+
+.reveal { opacity: 0; transform: translateY(30px); transition: all 0.7s ease; }
+79	+
+.reveal.visible { opacity: 1; transform: translateY(0); }
+80	+
+81	+
+.feature-card {
+82	+
+  background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+83	+
+  border: 2px solid rgba(59, 130, 246, 0.15);
+84	+
+  border-radius: 16px;
+85	+
+  padding: 24px;
+86	+
+  transition: all 0.3s ease;
+87	+
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.08);
+88	+
+}
+89	+
+90	+
+.feature-card:hover {
+91	+
+  transform: translateY(-8px);
+92	+
+  box-shadow: 0 12px 32px rgba(59, 130, 246, 0.12);
+93	+
+  border-color: rgba(59, 130, 246, 0.3);
+94	+
+  background: linear-gradient(135deg, #ffffff 0%, #f0f4f9 100%);
+95	+
+}
+96	+
+97	+
+.array-diagram {
+98	+
+  background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+99	+
+  border: 2px solid rgba(59, 130, 246, 0.2);
+100	+
+  border-radius: 16px;
+101	+
+  padding: 40px;
+102	+
+  font-family: 'Courier New', monospace;
+103	+
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.08);
+104	+
+  backdrop-filter: blur(5px);
+105	+
+}
+106	+
+107	+
+.array-cell {
+108	+
+  display: flex;
+109	+
+  align-items: center;
+110	+
+  justify-content: center;
+111	+
+  height: 70px;
+112	+
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(100, 116, 139, 0.05) 100%);
+113	+
+  color: #3b82f6;
+114	+
+  border: 2px solid rgba(59, 130, 246, 0.3);
+115	+
+  border-radius: 12px;
+116	+
+  font-weight: 700;
+117	+
+  font-size: 14px;
+118	+
+  margin-right: 8px;
+119	+
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.08);
+120	+
+  transition: all 0.3s ease;
+121	+
+  position: relative;
+122	+
+}
+123	+
+124	+
+.array-cell:hover {
+125	+
+  transform: translateY(-4px);
+126	+
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.15);
+127	+
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(100, 116, 139, 0.08) 100%);
+128	+
+  color: #2563eb;
+129	+
+}
+130	+
+131	+
+.array-cell.filled {
+132	+
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(59, 130, 246, 0.1) 100%);
+133	+
+  color: #22c55e;
+134	+
+  border-color: rgba(34, 197, 94, 0.4);
+135	+
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.12);
+136	+
+}
+137	+
+138	+
+.array-cell.empty {
+139	+
+  background: linear-gradient(135deg, rgba(100, 116, 139, 0.08) 0%, rgba(100, 116, 139, 0.03) 100%);
+140	+
+  color: #94a3b8;
+141	+
+  border-color: rgba(100, 116, 139, 0.2);
+142	+
+}
+143	+
+144	+
+.operation-block {
+145	+
+  background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+146	+
+  border-left: 5px solid rgba(59, 130, 246, 0.5);
+147	+
+  border-radius: 12px;
+148	+
+  padding: 20px;
+149	+
+  margin-bottom: 12px;
+150	+
+  transition: all 0.3s ease;
+151	+
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.08);
+152	+
+}
+153	+
+154	+
+.operation-block:hover {
+155	+
+  border-left-color: #3b82f6;
+156	+
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.12);
+157	+
+  transform: translateX(4px);
+158	+
+}
+159	+
+160	+
+.operation-title {
+161	+
+  font-size: 13px;
+162	+
+  font-weight: 700;
+163	+
+  color: #3b82f6;
+164	+
+  text-transform: uppercase;
+165	+
+  letter-spacing: 0.05em;
+166	+
+  margin-bottom: 8px;
+167	+
+}
+168	+
+169	+
+.operation-desc {
+170	+
+  font-size: 14px;
+171	+
+  color: #475569;
+172	+
+  line-height: 1.6;
+173	+
+  font-family: 'Source Sans Pro', sans-serif;
+174	+
+}
+175	+
+176	+
+.library-shelf {
+177	+
+  background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+178	+
+  border: 2px solid rgba(59, 130, 246, 0.15);
+179	+
+  border-radius: 16px;
+180	+
+  padding: 24px;
+181	+
+  transition: all 0.3s ease;
+182	+
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.08);
+183	+
+}
+184	+
+185	+
+.library-shelf:hover {
+186	+
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.12);
+187	+
+  border-color: rgba(59, 130, 246, 0.3);
+188	+
+}
+189	+
+190	+
+.book-item {
+191	+
+  display: inline-flex;
+192	+
+  align-items: center;
+193	+
+  justify-content: center;
+194	+
+  width: 50px;
+195	+
+  height: 70px;
+196	+
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+197	+
+  color: white;
+198	+
+  border-radius: 8px;
+199	+
+  font-weight: 700;
+200	+
+  font-size: 12px;
+201	+
+  margin: 0 4px;
+202	+
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+203	+
+  transition: all 0.3s ease;
+204	+
+}
+205	+
+206	+
+.book-item:hover {
+207	+
+  transform: translateY(-6px);
+208	+
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+209	+
+}
+210	+
+211	+
+.feature-list-item {
+212	+
+  background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+213	+
+  border: 2px solid rgba(59, 130, 246, 0.12);
+214	+
+  border-radius: 12px;
+215	+
+  padding: 16px;
+216	+
+  display: flex;
+217	+
+  gap: 16px;
+218	+
+  transition: all 0.3s ease;
+219	+
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.06);
+220	+
+}
+221	+
+222	+
+.feature-list-item:hover {
+223	+
+  border-color: rgba(59, 130, 246, 0.25);
+224	+
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.1);
+225	+
+  transform: translateX(4px);
+226	+
+}
+227	+
+228	+
+.feature-icon {
+229	+
+  flex-shrink-0;
+230	+
+  width: 40px;
+231	+
+  height: 40px;
+232	+
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(100, 116, 139, 0.08) 100%);
+233	+
+  color: #3b82f6;
+234	+
+  border-radius: 10px;
+235	+
+  display: flex;
+236	+
+  align-items: center;
+237	+
+  justify-content: center;
+238	+
+  font-size: 20px;
+239	+
+}
+240	+
+241	+
+.limitation-box {
+242	+
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(241, 169, 160, 0.05) 100%);
+243	+
+  border: 2px solid rgba(239, 68, 68, 0.2);
+244	+
+  border-radius: 12px;
+245	+
+  padding: 20px;
+246	+
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.08);
+247	+
+}
+248	+
+249	+
+.tech-badge {
+250	+
+  background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+251	+
+  border: 2px solid rgba(59, 130, 246, 0.15);
+252	+
+  border-radius: 12px;
+253	+
+  padding: 20px;
+254	+
+  text-align: center;
+255	+
+  transition: all 0.3s ease;
+256	+
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.08);
+257	+
+}
+258	+
+259	+
+.tech-badge:hover {
+260	+
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.12);
+261	+
+  transform: translateY(-4px);
+262	+
+  border-color: rgba(59, 130, 246, 0.3);
+263	+
+}
+264	+
+265	+
+.tech-icon {
+266	+
+  width: 36px;
+267	+
+  height: 36px;
+268	+
+  color: #3b82f6;
+269	+
+  margin: 0 auto 12px;
+270	+
+}
+271	+
+272	+
+@media (max-width: 768px) {
+273	+
+  .array-cell { height: 60px; font-size: 12px; }
+274	+
+  .book-item { width: 45px; height: 65px; }
+275	+
+}
+276	+
+</style>
+277	+
+  <style>body { box-sizing: border-box; }</style>
+278	+
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+279	+
+ </head>
+280	+
+ <body class="h-full font-body">
+281	+
+  <div id="app-wrapper" class="w-full h-full overflow-auto">
+282	+
+   <!-- Header -->
+283	+
+   <header class="relative w-full pt-16 pb-12 text-center overflow-hidden">
+284	+
+    <div class="relative z-10">
+285	+
+     <p class="anim-fade-up text-xs tracking-[0.15em] text-blue-500 uppercase font-bold mb-3 flex items-center justify-center gap-2"><i data-lucide="book-open" style="width:16px;height:16px"></i> [ Array Data Structure ] <i data-lucide="book-open" style="width:16px;height:16px"></i></p>
+286	+
+     <h1 id="project-title" class="anim-fade-up-1 font-heading text-5xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-slate-700 mb-2">Library Book Management</h1>
+287	+
+     <p class="anim-fade-up-2 text-lg md:text-xl text-blue-600 font-semibold">(Array-Based System)</p>
+288	+
+    </div>
+289	+
+   </header><!-- Concept Section -->
+290	+
+   <section class="w-full py-16 px-6">
+291	+
+    <div class="max-w-5xl mx-auto">
+292	+
+     <div class="reveal bg-gradient-to-r from-blue-50 to-slate-50 rounded-lg p-8 md:p-12 shadow-sm border-2 border-blue-200">
+293	+
+      <div class="flex items-start gap-4">
+294	+
+       <i data-lucide="lightbulb" class="text-blue-500 flex-shrink-0" style="width:28px;height:28px"></i>
+295	+
+       <div>
+296	+
+        <p class="text-xs tracking-widest text-blue-600 uppercase font-bold mb-2">Concept</p>
+297	+
+        <p id="concept-desc" class="text-slate-700 text-lg leading-relaxed font-body">Manage a fixed-size collection of books using an array data structure. Each book occupies a specific index position. The system maintains a count of stored books and enforces capacity limits. This approach provides fast indexed access but limits flexibility in expansion.</p>
+298	+
+       </div>
+299	+
+      </div>
+300	+
+     </div>
+301	+
+    </div>
+302	+
+   </section><!-- Features Section -->
+303	+
+   <section class="w-full py-16 px-6 bg-gradient-to-b from-transparent to-blue-50">
+304	+
+    <div class="max-w-5xl mx-auto">
+305	+
+     <p class="text-xs tracking-widest text-blue-600 uppercase font-bold mb-8 text-center">[ Core Features ]</p>
+306	+
+     <div class="grid md:grid-cols-2 gap-6">
+307	+
+      <div class="reveal feature-card anim-fade-up">
+308	+
+       <div class="flex items-center gap-3 mb-4">
+309	+
+        <i data-lucide="plus-circle" class="text-green-500" style="width:24px;height:24px"></i>
+310	+
+        <h3 class="text-lg font-bold text-slate-800">Add Books</h3>
+311	+
+       </div>
+312	+
+       <p class="text-slate-600 text-sm leading-relaxed">Insert new book records into available array positions. System checks capacity before allowing additions.</p>
+313	+
+      </div>
+314	+
+      <div class="reveal feature-card anim-fade-up-1">
+315	+
+       <div class="flex items-center gap-3 mb-4">
+316	+
+        <i data-lucide="trash-2" class="text-red-500" style="width:24px;height:24px"></i>
+317	+
+        <h3 class="text-lg font-bold text-slate-800">Remove Books</h3>
+318	+
+       </div>
+319	+
+       <p class="text-slate-600 text-sm leading-relaxed">Delete book records by index or reference. Frees up array positions for new entries.</p>
+320	+
+      </div>
+321	+
+      <div class="reveal feature-card anim-fade-up-2">
+322	+
+       <div class="flex items-center gap-3 mb-4">
+323	+
+        <i data-lucide="search" class="text-blue-500" style="width:24px;height:24px"></i>
+324	+
+        <h3 class="text-lg font-bold text-slate-800">Search Books</h3>
+325	+
+       </div>
+326	+
+       <p class="text-slate-600 text-sm leading-relaxed">Find books by title, author, or ISBN. Linear search through array elements efficiently.</p>
+327	+
+      </div>
+328	+
+      <div class="reveal feature-card anim-fade-up-3">
+329	+
+       <div class="flex items-center gap-3 mb-4">
+330	+
+        <i data-lucide="list" class="text-purple-500" style="width:24px;height:24px"></i>
+331	+
+        <h3 class="text-lg font-bold text-slate-800">Display All</h3>
+332	+
+       </div>
+333	+
+       <p class="text-slate-600 text-sm leading-relaxed">View complete list of all stored books with details. Iterate through array indices sequentially.</p>
+334	+
+      </div>
+335	+
+     </div>
+336	+
+    </div>
+337	+
+   </section><!-- Library Shelf Visualization -->
+338	+
+   <section class="w-full py-16 px-6">
+339	+
+    <div class="max-w-5xl mx-auto">
+340	+
+     <p class="text-xs tracking-widest text-blue-600 uppercase font-bold mb-8 text-center">[ Library Shelf Representation ]</p>
+341	+
+     <div class="reveal anim-slide-right">
+342	+
+      <div class="library-shelf">
+343	+
+       <p class="text-center text-xs tracking-widest text-blue-600 uppercase font-bold mb-6">Book Storage Array</p>
+344	+
+       <div class="flex items-end justify-center gap-2 mb-6 overflow-x-auto pb-2">
+345	+
+        <div class="book-item">
+346	+
+         D
+347	+
+        </div>
+348	+
+        <div class="book-item" style="background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);">
+349	+
+         B1
+350	+
+        </div>
+351	+
+        <div class="book-item" style="background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);">
+352	+
+         B2
+353	+
+        </div>
+354	+
+        <div class="book-item" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);">
+355	+
+         B3
+356	+
+        </div>
+357	+
+        <div class="book-item" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+358	+
+         B4
+359	+
+        </div>
+360	+
+        <div class="book-item" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);">
+361	+
+         B5
+362	+
+        </div>
+363	+
+       </div>
+364	+
+       <p class="text-center text-slate-600 text-sm font-body">5 Books stored | Capacity: 10 | Available slots: 5</p>
+365	+
+      </div>
+366	+
+     </div>
+367	+
+    </div>
+368	+
+   </section><!-- Array Structure Diagram -->
+369	+
+   <section class="w-full py-16 px-6 bg-gradient-to-b from-transparent to-blue-50">
+370	+
+    <div class="max-w-5xl mx-auto">
+371	+
+     <p class="text-xs tracking-widest text-blue-600 uppercase font-bold mb-8 text-center">[ Array Structure ]</p>
+372	+
+     <div class="reveal anim-slide-left">
+373	+
+      <div class="array-diagram">
+374	+
+       <div class="text-center mb-6">
+375	+
+        <p class="text-xs text-blue-600 font-bold uppercase tracking-widest mb-4">Memory Representation</p>
+376	+
+       </div>
+377	+
+       <div class="flex flex-wrap justify-center gap-0 mb-8">
+378	+
+        <div class="array-cell filled">
+379	+
+         B1
+380	+
+        </div>
+381	+
+        <div class="array-cell filled">
+382	+
+         B2
+383	+
+        </div>
+384	+
+        <div class="array-cell filled">
+385	+
+         B3
+386	+
+        </div>
+387	+
+        <div class="array-cell filled">
+388	+
+         B4
+389	+
+        </div>
+390	+
+        <div class="array-cell filled">
+391	+
+         B5
+392	+
+        </div>
+393	+
+        <div class="array-cell empty">
+394	+
+         --
+395	+
+        </div>
+396	+
+        <div class="array-cell empty">
+397	+
+         --
+398	+
+        </div>
+399	+
+        <div class="array-cell empty">
+400	+
+         --
+401	+
+        </div>
+402	+
+        <div class="array-cell empty">
+403	+
+         --
+404	+
+        </div>
+405	+
+        <div class="array-cell empty">
+406	+
+         --
+407	+
+        </div>
+408	+
+       </div>
+409	+
+       <div class="flex justify-center gap-0 mb-6 text-slate-600 text-xs font-bold">
+410	+
+        <div style="width: calc((100% - 0px) / 10); text-align: center;">
+411	+
+         [0]
+412	+
+        </div>
+413	+
+        <div style="width: calc((100% - 0px) / 10); text-align: center;">
+414	+
+         [1]
+415	+
+        </div>
+416	+
+        <div style="width: calc((100% - 0px) / 10); text-align: center;">
+417	+
+         [2]
+418	+
+        </div>
+419	+
+        <div style="width: calc((100% - 0px) / 10); text-align: center;">
+420	+
+         [3]
+421	+
+        </div>
+422	+
+        <div style="width: calc((100% - 0px) / 10); text-align: center;">
+423	+
+         [4]
+424	+
+        </div>
+425	+
+        <div style="width: calc((100% - 0px) / 10); text-align: center;">
+426	+
+         [5]
+427	+
+        </div>
+428	+
+        <div style="width: calc((100% - 0px) / 10); text-align: center;">
+429	+
+         [6]
+430	+
+        </div>
+431	+
+        <div style="width: calc((100% - 0px) / 10); text-align: center;">
+432	+
+         [7]
+433	+
+        </div>
+434	+
+        <div style="width: calc((100% - 0px) / 10); text-align: center;">
+435	+
+         [8]
+436	+
+        </div>
+437	+
+        <div style="width: calc((100% - 0px) / 10); text-align: center;">
+438	+
+         [9]
+439	+
+        </div>
+440	+
+       </div>
+441	+
+       <div class="text-center text-slate-600 text-sm">
+442	+
+        <p class="mb-2"><strong>Fixed Size:</strong> 10 elements</p>
+443	+
+        <p><strong>Element Type:</strong> Book Structure (Title, Author, ISBN, Year)</p>
+444	+
+       </div>
+445	+
+      </div>
+446	+
+     </div>
+447	+
+    </div>
+448	+
+   </section><!-- Operations Section -->
+449	+
+   <section class="w-full py-16 px-6">
+450	+
+    <div class="max-w-5xl mx-auto">
+451	+
+     <p class="text-xs tracking-widest text-blue-600 uppercase font-bold mb-8 text-center">[ Operations &amp; Usage ]</p>
+452	+
+     <div class="grid md:grid-cols-2 gap-6">
+453	+
+      <!-- Add Operation -->
+454	+
+      <div class="reveal anim-fade-up">
+455	+
+       <p class="text-xs tracking-widest text-green-600 uppercase font-bold mb-4">1. Add Book</p>
+456	+
+       <div class="space-y-3">
+457	+
+        <div class="operation-block">
+458	+
+         <p class="operation-title">Check Capacity</p>
+459	+
+         <p class="operation-desc">Verify count &lt; array.size before adding</p>
+460	+
+        </div>
+461	+
+        <div class="operation-block">
+462	+
+         <p class="operation-title">Insert Data</p>
+463	+
+         <p class="operation-desc">Place book at array[count] position</p>
+464	+
+        </div>
+465	+
+        <div class="operation-block">
+466	+
+         <p class="operation-title">Increment Count</p>
+467	+
+         <p class="operation-desc">Increase total count by 1</p>
+468	+
+        </div>
+469	+
+       </div>
+470	+
+      </div><!-- Remove Operation -->
+471	+
+      <div class="reveal anim-fade-up-1">
+472	+
+       <p class="text-xs tracking-widest text-red-600 uppercase font-bold mb-4">2. Remove Book</p>
+473	+
+       <div class="space-y-3">
+474	+
+        <div class="operation-block">
+475	+
+         <p class="operation-title">Find Index</p>
+476	+
+         <p class="operation-desc">Locate book by ID or search criteria</p>
+477	+
+        </div>
+478	+
+        <div class="operation-block">
+479	+
+         <p class="operation-title">Shift Elements</p>
+480	+
+         <p class="operation-desc">Move remaining books left to fill gap</p>
+481	+
+        </div>
+482	+
+        <div class="operation-block">
+483	+
+         <p class="operation-title">Decrement Count</p>
+484	+
+         <p class="operation-desc">Decrease total count by 1</p>
+485	+
+        </div>
+486	+
+       </div>
+487	+
+      </div><!-- Search Operation -->
+488	+
+      <div class="reveal anim-fade-up-2">
+489	+
+       <p class="text-xs tracking-widest text-blue-600 uppercase font-bold mb-4">3. Search Book</p>
+490	+
+       <div class="space-y-3">
+491	+
+        <div class="operation-block">
+492	+
+         <p class="operation-title">Linear Search</p>
+493	+
+         <p class="operation-desc">Iterate through array from start</p>
+494	+
+        </div>
+495	+
+        <div class="operation-block">
+496	+
+         <p class="operation-title">Compare Fields</p>
+497	+
+         <p class="operation-desc">Match title/author with user query</p>
+498	+
+        </div>
+499	+
+        <div class="operation-block">
+500	+
+         <p class="operation-title">Return Result</p>
+501	+
+         <p class="operation-desc">Display matching book or "Not Found"</p>
+502	+
+        </div>
+503	+
+       </div>
+504	+
+      </div><!-- Display Operation -->
+505	+
+      <div class="reveal anim-fade-up-3">
+506	+
+       <p class="text-xs tracking-widest text-purple-600 uppercase font-bold mb-4">4. Display All</p>
+507	+
+       <div class="space-y-3">
+508	+
+        <div class="operation-block">
+509	+
+         <p class="operation-title">Loop Through Array</p>
+510	+
+         <p class="operation-desc">Iterate from index 0 to count-1</p>
+511	+
+        </div>
+512	+
+        <div class="operation-block">
+513	+
+         <p class="operation-title">Fetch Details</p>
+514	+
+         <p class="operation-desc">Retrieve book information at each index</p>
+515	+
+        </div>
+516	+
+        <div class="operation-block">
+517	+
+         <p class="operation-title">Format &amp; Display</p>
+518	+
+         <p class="operation-desc">Present sorted list to user</p>
+519	+
+        </div>
+520	+
+       </div>
+521	+
+      </div>
+522	+
+     </div>
+523	+
+    </div>
+524	+
+   </section><!-- Limitations Section -->
+525	+
+   <section class="w-full py-16 px-6 bg-gradient-to-b from-transparent to-red-50">
+526	+
+    <div class="max-w-5xl mx-auto">
+527	+
+     <p class="text-xs tracking-widest text-red-600 uppercase font-bold mb-8 text-center">[ Limitations &amp; Constraints ]</p>
+528	+
+     <div class="reveal">
+529	+
+      <div class="limitation-box">
+530	+
+       <div class="flex items-start gap-6">
+531	+
+        <div class="flex-shrink-0">
+532	+
+         <i data-lucide="alert-circle" class="text-red-500" style="width:32px;height:32px"></i>
+533	+
+        </div>
+534	+
+        <div>
+535	+
+         <h3 class="text-lg font-bold text-red-700 mb-3">Key Limitations</h3>
+536	+
+         <ul class="space-y-3 text-slate-700">
+537	+
+          <li class="flex items-start gap-3"><span class="text-red-500 font-bold mt-1">•</span> <span><strong>Fixed Capacity:</strong> Array size cannot be expanded once created. Prevents unlimited book additions.</span></li>
+538	+
+          <li class="flex items-start gap-3"><span class="text-red-500 font-bold mt-1">•</span> <span><strong>Inefficient Deletion:</strong> Removing elements requires shifting remaining items, causing O(n) complexity.</span></li>
+539	+
+          <li class="flex items-start gap-3"><span class="text-red-500 font-bold mt-1">•</span> <span><strong>Linear Search:</strong> Finding books requires scanning entire array, O(n) time complexity.</span></li>
+540	+
+          <li class="flex items-start gap-3"><span class="text-red-500 font-bold mt-1">•</span> <span><strong id="limitation-text">Fixed Space:</strong> Memory allocated upfront even if many slots remain empty.</span></li>
+541	+
+         </ul>
+542	+
+        </div>
+543	+
+       </div>
+544	+
+      </div>
+545	+
+     </div>
+546	+
+    </div>
+547	+
+   </section><!-- Advantages Section -->
+548	+
+   <section class="w-full py-16 px-6">
+549	+
+    <div class="max-w-5xl mx-auto">
+550	+
+     <p class="text-xs tracking-widest text-blue-600 uppercase font-bold mb-8 text-center">[ Benefits &amp; Advantages ]</p>
+551	+
+     <div class="grid md:grid-cols-2 gap-6">
+552	+
+      <div class="reveal feature-list-item anim-fade-up">
+553	+
+       <div class="feature-icon">
+554	+
+        ⚡
+555	+
+       </div>
+556	+
+       <div>
+557	+
+        <p class="font-semibold text-slate-800 text-sm">O(1) Access Time</p>
+558	+
+        <p class="text-xs text-slate-600 mt-1">Direct index access provides instant book lookup</p>
+559	+
+       </div>
+560	+
+      </div>
+561	+
+      <div class="reveal feature-list-item anim-fade-up-1">
+562	+
+       <div class="feature-icon">
+563	+
+        📦
+564	+
+       </div>
+565	+
+       <div>
+566	+
+        <p class="font-semibold text-slate-800 text-sm">Cache Friendly</p>
+567	+
+        <p class="text-xs text-slate-600 mt-1">Contiguous memory improves CPU cache performance</p>
+568	+
+       </div>
+569	+
+      </div>
+570	+
+      <div class="reveal feature-list-item anim-fade-up-2">
+571	+
+       <div class="feature-icon">
+572	+
+        🔍
+573	+
+       </div>
+574	+
+       <div>
+575	+
+        <p class="font-semibold text-slate-800 text-sm">Simple Implementation</p>
+576	+
+        <p class="text-xs text-slate-600 mt-1">Straightforward logic for add/remove/search operations</p>
+577	+
+       </div>
+578	+
+      </div>
+579	+
+      <div class="reveal feature-list-item anim-fade-up-3">
+580	+
+       <div class="feature-icon">
+581	+
+        🎯
+582	+
+       </div>
+583	+
+       <div>
+584	+
+        <p class="font-semibold text-slate-800 text-sm">Memory Efficient</p>
+585	+
+        <p class="text-xs text-slate-600 mt-1">No extra pointers or overhead like linked structures</p>
+586	+
+       </div>
+587	+
+      </div>
+588	+
+     </div>
+589	+
+    </div>
+590	+
+   </section><!-- Technical Stack -->
+591	+
+   <section class="w-full py-16 px-6 bg-gradient-to-b from-transparent to-blue-50">
+592	+
+    <div class="max-w-5xl mx-auto">
+593	+
+     <p class="text-xs tracking-widest text-blue-600 uppercase font-bold mb-8 text-center">[ Technical Stack ]</p>
+594	+
+     <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4">
+595	+
+      <div class="reveal tech-badge">
+596	+
+       <i data-lucide="code" class="tech-icon mx-auto mb-3"></i>
+597	+
+       <p class="text-sm font-bold text-slate-800">C Language</p>
+598	+
+      </div>
+599	+
+      <div class="reveal tech-badge" style="animation-delay: 0.05s;">
+600	+
+       <i data-lucide="square" class="tech-icon mx-auto mb-3"></i>
+601	+
+       <p class="text-sm font-bold text-slate-800">Array (Contiguous)</p>
+602	+
+      </div>
+603	+
+      <div class="reveal tech-badge" style="animation-delay: 0.1s;">
+604	+
+       <i data-lucide="database" class="tech-icon mx-auto mb-3"></i>
+605	+
+       <p class="text-sm font-bold text-slate-800">Struct (Book)</p>
+606	+
+      </div>
+607	+
+      <div class="reveal tech-badge" style="animation-delay: 0.15s;">
+608	+
+       <i data-lucide="book" class="tech-icon mx-auto mb-3"></i>
+609	+
+       <p class="text-sm font-bold text-slate-800">File I/O</p>
+610	+
+      </div>
+611	+
+     </div>
+612	+
+    </div>
+613	+
+   </section><!-- Footer -->
+614	+
+   <footer class="w-full bg-gradient-to-r from-blue-100 to-slate-100 text-slate-800 mt-20 py-12 px-6 border-t border-blue-200">
+615	+
+    <div class="max-w-5xl mx-auto">
+616	+
+     <div class="text-center">
+617	+
+      <div class="mb-4 pb-4 border-b border-blue-200">
+618	+
+       <p class="text-blue-600 text-sm font-semibold mb-1">📚 ━━━━━━━━━━━━━━ 📚</p>
+619	+
+       <p id="footer-student" class="text-slate-800 font-heading font-bold text-lg">Your Name</p>
+620	+
+       <p id="footer-course" class="text-blue-600 text-sm font-medium">BTech CSE | Semester 3</p>
+621	+
+       <p class="text-blue-600 text-sm font-semibold mt-1">📚 ━━━━━━━━━━━━━━ 📚</p>
+622	+
+      </div>
+623	+
+      <p class="text-slate-600 text-xs">Data Structures &amp; Algorithms Project | Array-Based Library Management System</p>
+624	+
+     </div>
+625	+
+    </div>
+626	+
+   </footer>
+627	+
+  </div>
+628	+
+  <script>
+629	+
+const defaultConfig = {
+630	+
+  project_title: 'Library Book Management (Array-Based System)',
+631	+
+  concept_text: 'Manage a fixed-size collection of books using an array data structure. Each book occupies a specific index position. The system maintains a count of stored books and enforces capacity limits. This approach provides fast indexed access but limits flexibility in expansion.',
+632	+
+  limitation_text: 'Fixed Space: Memory allocated upfront even if many slots remain empty.',
+633	+
+  student_name: 'Your Name',
+634	+
+  course_details: 'BTech CSE | Semester 3'
+635	+
+};
+636	+
+637	+
+function applyConfig(config) {
+638	+
+  const c = { ...defaultConfig, ...config };
+639	+
+  const el = (id) => document.getElementById(id);
+640	+
+641	+
+  if (el('project-title')) el('project-title').textContent = c.project_title;
+642	+
+  if (el('concept-desc')) el('concept-desc').textContent = c.concept_text;
+643	+
+  if (el('limitation-text')) el('limitation-text').textContent = c.limitation_text;
+644	+
+  if (el('footer-student')) el('footer-student').textContent = c.student_name;
+645	+
+  if (el('footer-course')) el('footer-course').textContent = c.course_details;
+646	+
+}
+647	+
+648	+
+// Element SDK
+649	+
+window.elementSdk.init({
+650	+
+  defaultConfig,
+651	+
+  onConfigChange: async (config) => applyConfig(config),
+652	+
+  mapToCapabilities: (config) => ({
+653	+
+    recolorables: [],
+654	+
+    borderables: [],
+655	+
+    fontEditable: undefined,
+656	+
+    fontSizeable: undefined
+657	+
+  }),
+658	+
+  mapToEditPanelValues: (config) => new Map([
+659	+
+    ['project_title', config.project_title || defaultConfig.project_title],
+660	+
+    ['concept_text', config.concept_text || defaultConfig.concept_text],
+661	+
+    ['limitation_text', config.limitation_text || defaultConfig.limitation_text],
+662	+
+    ['student_name', config.student_name || defaultConfig.student_name],
+663	+
+    ['course_details', config.course_details || defaultConfig.course_details]
+664	+
+  ])
+665	+
+});
+666	+
+667	+
+// Scroll reveal animation
+668	+
+const observer = new IntersectionObserver((entries) => {
+669	+
+  entries.forEach(entry => {
+670	+
+    if (entry.isIntersecting) {
+671	+
+      entry.target.classList.add('visible');
+672	+
+    }
+673	+
+  });
+674	+
+}, { threshold: 0.1 });
+675	+
+676	+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+677	+
+678	+
+lucide.createIcons();
+679	+
+</script>
+680	+
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9eab2e5da4a24932',t:'MTc3NTkyMjk4NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+681	+
+</html>
