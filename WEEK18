@@ -1,0 +1,772 @@
+!doctype html>
+
+
+2	+
+<html lang="en" class="h-full">
+3	+
+ <head>
+4	+
+  <meta charset="UTF-8">
+5	+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+6	+
+  <title>File System Directory Presentation</title>
+7	+
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+8	+
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+9	+
+  <script src="/_sdk/element_sdk.js"></script>
+10	+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&amp;family=Inter:wght@400;500&amp;display=swap" rel="stylesheet">
+11	+
+  <script>
+12	+
+tailwind.config = {
+13	+
+  theme: {
+14	+
+    extend: {
+15	+
+      fontFamily: {
+16	+
+        heading: ['Poppins', 'sans-serif'],
+17	+
+        body: ['Inter', 'sans-serif']
+18	+
+      }
+19	+
+    }
+20	+
+  }
+21	+
+}
+22	+
+</script>
+23	+
+  <style>
+24	+
+html, body { height: 100%; margin: 0; }
+25	+
+* { scroll-behavior: smooth; }
+26	+
+27	+
+body {
+28	+
+  background: linear-gradient(135deg, #0f172a 0%, #1a2a4a 50%, #0f1729 100%);
+29	+
+  color: #e2e8f0;
+30	+
+  overflow-x: hidden;
+31	+
+}
+32	+
+33	+
+@keyframes fadeUp {
+34	+
+  from { opacity: 0; transform: translateY(40px); }
+35	+
+  to { opacity: 1; transform: translateY(0); }
+36	+
+}
+37	+
+@keyframes slideInLeft {
+38	+
+  from { opacity: 0; transform: translateX(-30px); }
+39	+
+  to { opacity: 1; transform: translateX(0); }
+40	+
+}
+41	+
+@keyframes pulse {
+42	+
+  0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4); }
+43	+
+  50% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+44	+
+}
+45	+
+46	+
+.anim-fade-up { animation: fadeUp 0.8s ease both; }
+47	+
+.anim-fade-up-1 { animation: fadeUp 0.8s 0.1s ease both; }
+48	+
+.anim-fade-up-2 { animation: fadeUp 0.8s 0.2s ease both; }
+49	+
+.anim-fade-up-3 { animation: fadeUp 0.8s 0.3s ease both; }
+50	+
+.anim-slide-left { animation: slideInLeft 0.6s ease both; }
+51	+
+52	+
+.reveal { opacity: 0; transform: translateY(30px); transition: all 0.7s ease; }
+53	+
+.reveal.visible { opacity: 1; transform: translateY(0); }
+54	+
+55	+
+.feature-item {
+56	+
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+57	+
+  border-left: 4px solid #22c55e;
+58	+
+  transition: all 0.3s ease;
+59	+
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.15);
+60	+
+}
+61	+
+.feature-item:hover {
+62	+
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(16, 185, 129, 0.1) 100%);
+63	+
+  transform: translateX(5px);
+64	+
+  box-shadow: 0 4px 16px rgba(34, 197, 94, 0.25);
+65	+
+}
+66	+
+67	+
+.tree-diagram {
+68	+
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.8) 100%);
+69	+
+  border: 2px solid #22c55e;
+70	+
+  border-radius: 8px;
+71	+
+  padding: 24px;
+72	+
+  position: relative;
+73	+
+}
+74	+
+75	+
+.tree-node {
+76	+
+  display: inline-flex;
+77	+
+  align-items: center;
+78	+
+  justify-content: center;
+79	+
+  width: 48px;
+80	+
+  height: 48px;
+81	+
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+82	+
+  border-radius: 8px;
+83	+
+  color: #0f172a;
+84	+
+  font-weight: 700;
+85	+
+  font-size: 12px;
+86	+
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+87	+
+  position: relative;
+88	+
+}
+89	+
+90	+
+.tree-node.folder {
+91	+
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+92	+
+  color: white;
+93	+
+}
+94	+
+95	+
+.operation-box {
+96	+
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+97	+
+  border-left: 4px solid #22c55e;
+98	+
+  padding: 16px;
+99	+
+  border-radius: 6px;
+100	+
+  margin-bottom: 12px;
+101	+
+}
+102	+
+103	+
+.operation-box.preorder {
+104	+
+  border-left-color: #3b82f6;
+105	+
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(29, 78, 216, 0.05) 100%);
+106	+
+}
+107	+
+108	+
+.operation-box.inorder {
+109	+
+  border-left-color: #8b5cf6;
+110	+
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(109, 40, 217, 0.05) 100%);
+111	+
+}
+112	+
+113	+
+.operation-box.postorder {
+114	+
+  border-left-color: #ec4899;
+115	+
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.1) 0%, rgba(190, 24, 93, 0.05) 100%);
+116	+
+}
+117	+
+118	+
+.green-accent { color: #22c55e; }
+119	+
+.blue-accent { color: #3b82f6; }
+120	+
+.purple-accent { color: #8b5cf6; }
+121	+
+.pink-accent { color: #ec4899; }
+122	+
+123	+
+.btn-primary {
+124	+
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+125	+
+  color: white;
+126	+
+  padding: 10px 20px;
+127	+
+  border-radius: 6px;
+128	+
+  font-weight: 600;
+129	+
+  border: none;
+130	+
+  cursor: pointer;
+131	+
+  transition: all 0.3s ease;
+132	+
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.2);
+133	+
+}
+134	+
+.btn-primary:hover {
+135	+
+  transform: translateY(-2px);
+136	+
+  box-shadow: 0 4px 16px rgba(34, 197, 94, 0.3);
+137	+
+}
+138	+
+139	+
+@media (max-width: 768px) {
+140	+
+  .tree-diagram { min-height: 250px; }
+141	+
+}
+142	+
+</style>
+143	+
+  <style>body { box-sizing: border-box; }</style>
+144	+
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+145	+
+ </head>
+146	+
+ <body class="h-full font-body bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
+147	+
+  <div id="app-wrapper" class="w-full h-full overflow-auto"><!-- Header -->
+148	+
+   <header class="relative w-full pt-16 pb-12 text-center overflow-hidden">
+149	+
+    <div class="absolute inset-0 opacity-20">
+150	+
+     <div class="absolute top-0 left-1/4 w-64 h-64 bg-green-400 rounded-full mix-blend-multiply filter blur-3xl"></div>
+151	+
+     <div class="absolute top-20 right-1/4 w-64 h-64 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl"></div>
+152	+
+    </div>
+153	+
+    <div class="relative z-10">
+154	+
+     <p class="anim-fade-up text-xs tracking-[0.15em] text-green-400 uppercase font-bold mb-3">[ Data Structures Project ]</p>
+155	+
+     <h1 id="project-title" class="anim-fade-up-1 font-heading text-5xl md:text-6xl font-bold text-green-300 mb-2">File System Directory</h1>
+156	+
+     <p class="anim-fade-up-2 text-lg md:text-xl text-blue-400 font-semibold">(Tree Structure)</p>
+157	+
+    </div>
+158	+
+   </header><!-- Concept Section -->
+159	+
+   <section class="w-full py-16 px-6">
+160	+
+    <div class="max-w-5xl mx-auto">
+161	+
+     <div class="reveal bg-gradient-to-r from-slate-800 to-slate-700 rounded-lg p-8 md:p-12 shadow-lg border-l-4 border-green-500">
+162	+
+      <div class="flex items-start gap-4 mb-6"><i data-lucide="lightbulb" class="text-green-400 flex-shrink-0" style="width:28px;height:28px"></i>
+163	+
+       <div>
+164	+
+        <p class="text-xs tracking-widest text-green-400 uppercase font-bold mb-2">Concept</p>
+165	+
+        <p id="concept-desc" class="text-slate-200 text-lg leading-relaxed font-body">Represent a hierarchical folder structure using a binary tree where each node represents a directory and can have left (subfolder) and right (sibling) children.</p>
+166	+
+       </div>
+167	+
+      </div>
+168	+
+     </div>
+169	+
+    </div>
+170	+
+   </section><!-- Features Section -->
+171	+
+   <section class="w-full py-16 px-6">
+172	+
+    <div class="max-w-5xl mx-auto">
+173	+
+     <p class="text-xs tracking-widest text-green-400 uppercase font-bold mb-8">[ Key Features ]</p>
+174	+
+     <div class="grid md:grid-cols-2 gap-6">
+175	+
+      <div class="reveal feature-item rounded-lg p-6">
+176	+
+       <div class="flex items-center gap-3 mb-3"><i data-lucide="folder-plus" class="text-green-400" style="width:20px;height:20px"></i> <span class="text-green-300 font-bold text-sm">Create Directories</span>
+177	+
+       </div>
+178	+
+       <p class="text-slate-300 text-sm">Add folders and subfolders to build directory tree</p>
+179	+
+      </div>
+180	+
+      <div class="reveal feature-item rounded-lg p-6" style="animation-delay: 0.1s">
+181	+
+       <div class="flex items-center gap-3 mb-3"><i data-lucide="folder-tree" class="text-blue-400" style="width:20px;height:20px"></i> <span class="text-blue-300 font-bold text-sm">Tree Traversal</span>
+182	+
+       </div>
+183	+
+       <p class="text-slate-300 text-sm">Navigate using Pre-order, In-order, Post-order methods</p>
+184	+
+      </div>
+185	+
+      <div class="reveal feature-item rounded-lg p-6" style="animation-delay: 0.2s">
+186	+
+       <div class="flex items-center gap-3 mb-3"><i data-lucide="layers" class="text-purple-400" style="width:20px;height:20px"></i> <span class="text-purple-300 font-bold text-sm">Hierarchy Display</span>
+187	+
+       </div>
+188	+
+       <p class="text-slate-300 text-sm">Visualize nested folder structure and parent-child relationships</p>
+189	+
+      </div>
+190	+
+      <div class="reveal feature-item rounded-lg p-6" style="animation-delay: 0.3s">
+191	+
+       <div class="flex items-center gap-3 mb-3"><i data-lucide="search" class="text-pink-400" style="width:20px;height:20px"></i> <span class="text-pink-300 font-bold text-sm">Search &amp; Navigate</span>
+192	+
+       </div>
+193	+
+       <p class="text-slate-300 text-sm">Find files and navigate through directory paths efficiently</p>
+194	+
+      </div>
+195	+
+     </div>
+196	+
+    </div>
+197	+
+   </section><!-- Tree Visualization -->
+198	+
+   <section class="w-full py-16 px-6 bg-gradient-to-br from-slate-800 to-slate-900">
+199	+
+    <div class="max-w-5xl mx-auto">
+200	+
+     <p class="text-xs tracking-widest text-green-400 uppercase font-bold mb-12 text-center">[ Tree Structure Visualization ]</p>
+201	+
+     <div class="grid md:grid-cols-2 gap-12 items-center"><!-- Tree Diagram -->
+202	+
+      <div class="reveal flex justify-center">
+203	+
+       <div class="tree-diagram flex flex-col items-center justify-center gap-8" style="min-height: 300px;"><!-- Root Node -->
+204	+
+        <div class="flex flex-col items-center gap-4">
+205	+
+         <div class="tree-node folder">
+206	+
+          <i data-lucide="folder" style="width:20px;height:20px"></i>
+207	+
+         </div>
+208	+
+         <p class="text-green-400 text-xs font-semibold">Root</p>
+209	+
+        </div><!-- Horizontal connectors -->
+210	+
+        <div class="flex gap-20 justify-center items-start relative" style="width: 100%; margin-top: -20px;">
+211	+
+         <div class="absolute top-0 left-1/3 right-1/3 h-6 border-t-2 border-l-2 border-r-2 border-green-500" style="width: 66.66%;"></div><!-- Left subtree -->
+212	+
+         <div class="flex flex-col items-center gap-4 relative">
+213	+
+          <div class="tree-node folder">
+214	+
+           <i data-lucide="folder" style="width:20px;height:20px"></i>
+215	+
+          </div>
+216	+
+          <p class="text-blue-400 text-xs font-semibold">Left</p><!-- Children -->
+217	+
+          <div class="flex gap-6 justify-center items-center mt-4">
+218	+
+           <div class="flex flex-col items-center gap-2">
+219	+
+            <div class="tree-node" style="width: 36px; height: 36px;">
+220	+
+             <i data-lucide="file" style="width:16px;height:16px"></i>
+221	+
+            </div>
+222	+
+            <p class="text-green-400 text-xs">File</p>
+223	+
+           </div>
+224	+
+           <div class="flex flex-col items-center gap-2">
+225	+
+            <div class="tree-node folder" style="width: 36px; height: 36px;">
+226	+
+             <i data-lucide="folder" style="width:16px;height:16px"></i>
+227	+
+            </div>
+228	+
+            <p class="text-blue-400 text-xs">Subfolder</p>
+229	+
+           </div>
+230	+
+          </div>
+231	+
+         </div><!-- Right subtree -->
+232	+
+         <div class="flex flex-col items-center gap-4 relative">
+233	+
+          <div class="tree-node folder">
+234	+
+           <i data-lucide="folder" style="width:20px;height:20px"></i>
+235	+
+          </div>
+236	+
+          <p class="text-blue-400 text-xs font-semibold">Right</p><!-- Children -->
+237	+
+          <div class="flex gap-6 justify-center items-center mt-4">
+238	+
+           <div class="flex flex-col items-center gap-2">
+239	+
+            <div class="tree-node" style="width: 36px; height: 36px;">
+240	+
+             <i data-lucide="file" style="width:16px;height:16px"></i>
+241	+
+            </div>
+242	+
+            <p class="text-green-400 text-xs">File</p>
+243	+
+           </div>
+244	+
+           <div class="flex flex-col items-center gap-2">
+245	+
+            <div class="tree-node" style="width: 36px; height: 36px;">
+246	+
+             <i data-lucide="file" style="width:16px;height:16px"></i>
+247	+
+            </div>
+248	+
+            <p class="text-green-400 text-xs">File</p>
+249	+
+           </div>
+250	+
+          </div>
+251	+
+         </div>
+252	+
+        </div>
+253	+
+       </div>
+254	+
+      </div><!-- Traversal Methods -->
+255	+
+      <div class="reveal" style="animation-delay: 0.1s">
+256	+
+       <div class="bg-slate-800 rounded-lg p-8 shadow-lg border border-slate-700">
+257	+
+        <p class="text-xs tracking-widest text-green-400 uppercase font-bold mb-6">Traversal Methods</p>
+258	+
+        <div class="space-y-4">
+259	+
+         <div class="operation-box preorder">
+260	+
+          <div class="flex items-start gap-3"><i data-lucide="arrow-down" class="text-blue-400 flex-shrink-0 mt-1" style="width:18px;height:18px"></i>
+261	+
+           <div>
+262	+
+            <p class="text-blue-300 font-bold text-sm">Pre-order</p>
+263	+
+            <p class="text-slate-400 text-xs mt-1">Root → Left → Right</p>
+264	+
+            <p class="text-slate-500 text-xs mt-2">Visit before children</p>
+265	+
+           </div>
+266	+
+          </div>
+267	+
+         </div>
+268	+
+         <div class="operation-box inorder">
+269	+
+          <div class="flex items-start gap-3"><i data-lucide="arrow-right" class="text-purple-400 flex-shrink-0 mt-1" style="width:18px;height:18px"></i>
+270	+
+           <div>
+271	+
+            <p class="text-purple-300 font-bold text-sm">In-order</p>
+272	+
+            <p class="text-slate-400 text-xs mt-1">Left → Root → Right</p>
+273	+
+            <p class="text-slate-500 text-xs mt-2">Process in sorted order</p>
+274	+
+           </div>
+275	+
+          </div>
+276	+
+         </div>
+277	+
+         <div class="operation-box postorder">
+278	+
+          <div class="flex items-start gap-3"><i data-lucide="arrow-up" class="text-pink-400 flex-shrink-0 mt-1" style="width:18px;height:18px"></i>
+279	+
+           <div>
+280	+
+            <p class="text-pink-300 font-bold text-sm">Post-order</p>
+281	+
+            <p class="text-slate-400 text-xs mt-1">Left → Right → Root</p>
+282	+
+            <p class="text-slate-500 text-xs mt-2">Visit after children</p>
+283	+
+           </div>
+284	+
+          </div>
+285	+
+         </div>
+286	+
+        </div>
+287	+
+       </div>
+288	+
+      </div>
+289	+
+     </div>
+290	+
+    </div>
+291	+
+   </section><!-- Use Case Section -->
+292	+
+   <section class="w-full py-16 px-6">
+293	+
+    <div class="max-w-5xl mx-auto">
+294	+
+     <p class="text-xs tracking-widest text-green-400 uppercase font-bold mb-8">[ Real-World Use Case ]</p>
+295	+
+     <div class="reveal bg-gradient-to-r from-green-600 to-blue-600 rounded-lg p-1">
+296	+
+      <div class="bg-slate-900 rounded-lg p-8">
+297	+
+       <div class="flex items-start gap-6">
+298	+
+        <div class="flex-shrink-0">
+299	+
+         <i data-lucide="hard-drive" class="text-green-400" style="width:40px;height:40px"></i>
+300	+
+        </div>
+301	+
+        <div>
+302	+
+         <p id="use-case-text" class="text-slate-200 text-base leading-relaxed"><strong class="text-green-400">Operating System File System:</strong> Every operating system organizes files and folders in a hierarchical tree structure. Root directory contains subdirectories which contain files and more subdirectories. Tree traversal methods help the OS efficiently navigate, list files, manage permissions, calculate disk usage, and organize backup operations through different traversal approaches.</p>
+303	+
+        </div>
+304	+
+       </div>
+305	+
+      </div>
+306	+
+     </div>
+307	+
+    </div>
+308	+
+   </section><!-- Technical Implementation -->
+309	+
+   <section class="w-full py-16 px-6 bg-slate-800">
+310	+
+    <div class="max-w-5xl mx-auto">
+311	+
+     <p class="text-xs tracking-widest text-green-400 uppercase font-bold mb-8">[ Technical Stack ]</p>
+312	+
+     <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4">
+313	+
+      <div class="reveal bg-slate-700 rounded-lg p-6 text-center shadow-md hover:shadow-lg transition-shadow" style="animation-delay: 0s"><i data-lucide="code" class="text-green-400 mx-auto mb-3" style="width:28px;height:28px"></i>
+314	+
+       <p class="text-sm font-bold text-slate-200">C Language</p>
+315	+
+      </div>
+316	+
+      <div class="reveal bg-slate-700 rounded-lg p-6 text-center shadow-md hover:shadow-lg transition-shadow" style="animation-delay: 0.05s"><i data-lucide="tree" class="text-blue-400 mx-auto mb-3" style="width:28px;height:28px"></i>
+317	+
+       <p class="text-sm font-bold text-slate-200">Binary Tree</p>
+318	+
+      </div>
+319	+
+      <div class="reveal bg-slate-700 rounded-lg p-6 text-center shadow-md hover:shadow-lg transition-shadow" style="animation-delay: 0.1s"><i data-lucide="folder" class="text-green-400 mx-auto mb-3" style="width:28px;height:28px"></i>
+320	+
+       <p class="text-sm font-bold text-slate-200">File Hierarchy</p>
+321	+
+      </div>
+322	+
+      <div class="reveal bg-slate-700 rounded-lg p-6 text-center shadow-md hover:shadow-lg transition-shadow" style="animation-delay: 0.15s"><i data-lucide="compass" class="text-purple-400 mx-auto mb-3" style="width:28px;height:28px"></i>
+323	+
+       <p class="text-sm font-bold text-slate-200">Tree Traversal</p>
+324	+
+      </div>
+325	+
+     </div>
+326	+
+    </div>
+327	+
+   </section><!-- Footer -->
+328	+
+   <footer class="w-full bg-gradient-to-r from-green-900 to-blue-900 border-t border-green-700 mt-20 py-12 px-6">
+329	+
+    <div class="max-w-5xl mx-auto">
+330	+
+     <div class="text-center">
+331	+
+      <div class="mb-4 pb-4 border-b border-green-600">
+332	+
+       <p class="text-green-400 text-sm font-semibold mb-1">━━━━━━━━━━━━━━━━━━━━━━━━━━━━</p>
+333	+
+       <p id="footer-student" class="text-slate-100 font-heading font-bold text-lg">Your Name</p>
+334	+
+       <p id="footer-course" class="text-slate-300 text-sm font-medium">BTech CSE | Semester 3</p>
+335	+
+       <p class="text-green-400 text-sm font-semibold mt-1">━━━━━━━━━━━━━━━━━━━━━━━━━━━━</p>
+336	+
+      </div>
+337	+
+      <p class="text-slate-400 text-xs">Data Structures &amp; Algorithms Project | Binary Tree File System Implementation</p>
+338	+
+     </div>
+339	+
+    </div>
+340	+
+   </footer>
+341	+
+  </div>
+342	+
+  <script>
+343	+
+const defaultConfig = {
+344	+
+  project_title: 'File System Directory (Tree Structure)',
+345	+
+  concept_text: 'Represent a hierarchical folder structure using a binary tree where each node represents a directory and can have left (subfolder) and right (sibling) children.',
+346	+
+  use_case_text: 'Operating System File System: Every operating system organizes files and folders in a hierarchical tree structure. Root directory contains subdirectories which contain files and more subdirectories. Tree traversal methods help the OS efficiently navigate, list files, manage permissions, calculate disk usage, and organize backup operations through different traversal approaches.',
+347	+
+  student_name: 'Your Name',
+348	+
+  course_details: 'BTech CSE | Semester 3'
+349	+
+};
+350	+
+351	+
+function applyConfig(config) {
+352	+
+  const c = { ...defaultConfig, ...config };
+353	+
+  const el = (id) => document.getElementById(id);
+354	+
+355	+
+  if (el('project-title')) el('project-title').textContent = c.project_title;
+356	+
+  if (el('concept-desc')) el('concept-desc').textContent = c.concept_text;
+357	+
+  if (el('use-case-text')) el('use-case-text').innerHTML = '<strong class="text-green-400">Operating System File System:</strong> ' + c.use_case_text.replace('Operating System File System: ', '');
+358	+
+  if (el('footer-student')) el('footer-student').textContent = c.student_name;
+359	+
+  if (el('footer-course')) el('footer-course').textContent = c.course_details;
+360	+
+}
+361	+
+362	+
+// Element SDK
+363	+
+window.elementSdk.init({
+364	+
+  defaultConfig,
+365	+
+  onConfigChange: async (config) => applyConfig(config),
+366	+
+  mapToCapabilities: (config) => ({
+367	+
+    recolorables: [],
+368	+
+    borderables: [],
+369	+
+    fontEditable: undefined,
+370	+
+    fontSizeable: undefined
+371	+
+  }),
+372	+
+  mapToEditPanelValues: (config) => new Map([
+373	+
+    ['project_title', config.project_title || defaultConfig.project_title],
+374	+
+    ['concept_text', config.concept_text || defaultConfig.concept_text],
+375	+
+    ['use_case_text', config.use_case_text || defaultConfig.use_case_text],
+376	+
+    ['student_name', config.student_name || defaultConfig.student_name],
+377	+
+    ['course_details', config.course_details || defaultConfig.course_details]
+378	+
+  ])
+379	+
+});
+380	+
+381	+
+// Scroll reveal animation
+382	+
+const observer = new IntersectionObserver((entries) => {
+383	+
+  entries.forEach(entry => {
+384	+
+    if (entry.isIntersecting) {
+385	+
+      entry.target.classList.add('visible');
+386	+
+    }
+387	+
+  });
+388	+
+}, { threshold: 0.1 });
+389	+
+390	+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+391	+
+392	+
+lucide.createIcons();
+393	+
+</script>
+394	+
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9ea963adc36b3fea',t:'MTc3NTkwNDE5Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+
+
+395	+
+</html>
