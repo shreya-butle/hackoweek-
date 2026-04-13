@@ -1,0 +1,826 @@
+<!doctype html>
+
+
+2	+
+<html lang="en" class="h-full">
+3	+
+ <head>
+4	+
+  <meta charset="UTF-8">
+5	+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+6	+
+  <title>Student Portfolio</title>
+7	+
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+8	+
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+9	+
+  <script src="/_sdk/element_sdk.js"></script>
+10	+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&amp;family=DM+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet">
+11	+
+  <script>
+12	+
+tailwind.config = {
+13	+
+  theme: {
+14	+
+    extend: {
+15	+
+      fontFamily: {
+16	+
+        heading: ['Poppins', 'sans-serif'],
+17	+
+        body: ['DM Sans', 'sans-serif']
+18	+
+      },
+19	+
+      colors: {
+20	+
+        navy: { 50: '#f0f4ff', 100: '#dbe4ff', 200: '#bac8ff', 300: '#91a7ff', 400: '#748ffc', 500: '#5c7cfa', 600: '#4c6ef5', 700: '#1a2a6c', 800: '#0f1b4d', 900: '#0a1235' }
+21	+
+      }
+22	+
+    }
+23	+
+  }
+24	+
+}
+25	+
+</script>
+26	+
+  <style>
+27	+
+html, body { height: 100%; margin: 0; }
+28	+
+* { scroll-behavior: smooth; }
+29	+
+30	+
+@keyframes fadeUp {
+31	+
+  from { opacity: 0; transform: translateY(30px); }
+32	+
+  to { opacity: 1; transform: translateY(0); }
+33	+
+}
+34	+
+@keyframes float {
+35	+
+  0%, 100% { transform: translateY(0); }
+36	+
+  50% { transform: translateY(-12px); }
+37	+
+}
+38	+
+@keyframes scaleIn {
+39	+
+  from { opacity: 0; transform: scale(0.9); }
+40	+
+  to { opacity: 1; transform: scale(1); }
+41	+
+}
+42	+
+@keyframes slideRight {
+43	+
+  from { width: 0%; }
+44	+
+  to { width: var(--target-width); }
+45	+
+}
+46	+
+47	+
+.anim-fade-up { animation: fadeUp 0.7s ease both; }
+48	+
+.anim-fade-up-1 { animation: fadeUp 0.7s 0.1s ease both; }
+49	+
+.anim-fade-up-2 { animation: fadeUp 0.7s 0.2s ease both; }
+50	+
+.anim-fade-up-3 { animation: fadeUp 0.7s 0.3s ease both; }
+51	+
+.anim-fade-up-4 { animation: fadeUp 0.7s 0.4s ease both; }
+52	+
+.anim-float { animation: float 4s ease-in-out infinite; }
+53	+
+.anim-scale { animation: scaleIn 0.5s ease both; }
+54	+
+55	+
+.reveal { opacity: 0; transform: translateY(30px); transition: all 0.6s ease; }
+56	+
+.reveal.visible { opacity: 1; transform: translateY(0); }
+57	+
+58	+
+.skill-bar-fill {
+59	+
+  height: 100%;
+60	+
+  border-radius: 9999px;
+61	+
+  animation: slideRight 1.2s ease both;
+62	+
+  animation-play-state: paused;
+63	+
+}
+64	+
+.skill-bar-fill.animate { animation-play-state: running; }
+65	+
+66	+
+.project-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(10,18,53,0.12); }
+67	+
+.project-card { transition: all 0.3s ease; }
+68	+
+69	+
+.nav-link { position: relative; }
+70	+
+.nav-link::after {
+71	+
+  content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 2px;
+72	+
+  background: linear-gradient(90deg, #4c6ef5, #748ffc); transition: width 0.3s ease;
+73	+
+}
+74	+
+.nav-link:hover::after { width: 100%; }
+75	+
+76	+
+.btn-primary {
+77	+
+  background: linear-gradient(135deg, #1a2a6c, #4c6ef5);
+78	+
+  transition: all 0.3s ease;
+79	+
+}
+80	+
+.btn-primary:hover {
+81	+
+  transform: translateY(-2px);
+82	+
+  box-shadow: 0 8px 24px rgba(76,110,245,0.4);
+83	+
+}
+84	+
+</style>
+85	+
+  <style>body { box-sizing: border-box; }</style>
+86	+
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+87	+
+ </head>
+88	+
+ <body class="h-full font-body text-gray-700 bg-white">
+89	+
+  <div id="app-wrapper" class="w-full h-full overflow-auto"><!-- Nav -->
+90	+
+   <nav id="main-nav" class="fixed top-0 left-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+91	+
+    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between"><a href="#hero" class="font-heading font-bold text-xl text-navy-800" id="nav-name">AK</a>
+92	+
+     <div class="hidden md:flex gap-8 text-sm font-medium text-gray-600"><a href="#hero" class="nav-link hover:text-navy-700">Home</a> <a href="#about" class="nav-link hover:text-navy-700">About</a> <a href="#projects" class="nav-link hover:text-navy-700">Projects</a> <a href="#skills" class="nav-link hover:text-navy-700">Skills</a> <a href="#contact" class="nav-link hover:text-navy-700">Contact</a>
+93	+
+     </div><button id="mobile-toggle" class="md:hidden text-navy-800"><i data-lucide="menu" style="width:24px;height:24px"></i></button>
+94	+
+    </div>
+95	+
+    <div id="mobile-menu" class="hidden md:hidden px-6 pb-4 flex flex-col gap-3 text-sm font-medium text-gray-600"><a href="#hero" class="py-1">Home</a><a href="#about" class="py-1">About</a><a href="#projects" class="py-1">Projects</a><a href="#skills" class="py-1">Skills</a><a href="#contact" class="py-1">Contact</a>
+96	+
+    </div>
+97	+
+   </nav><!-- Hero -->
+98	+
+   <section id="hero" class="w-full pt-28 pb-20 md:pt-36 md:pb-28" style="background: linear-gradient(160deg, #f0f4ff 0%, #ffffff 40%, #f8f9ff 100%);">
+99	+
+    <div class="max-w-6xl mx-auto px-6 flex flex-col-reverse md:flex-row items-center gap-12">
+100	+
+     <div class="flex-1 text-center md:text-left">
+101	+
+      <p class="anim-fade-up text-navy-500 font-medium text-sm tracking-widest uppercase mb-3">Hello, I'm</p>
+102	+
+      <h1 id="hero-name" class="anim-fade-up-1 font-heading font-extrabold text-4xl md:text-6xl text-navy-900 leading-tight mb-4">Arjun Kumar</h1>
+103	+
+      <p id="hero-tagline" class="anim-fade-up-2 text-lg md:text-xl text-navy-400 font-medium mb-5">Aspiring Developer | BTech Student</p>
+104	+
+      <p id="hero-intro" class="anim-fade-up-3 text-gray-500 leading-relaxed max-w-lg mb-8 mx-auto md:mx-0">Passionate about building clean, functional software. Currently pursuing BTech in Computer Science with a focus on web development and data structures.</p>
+105	+
+      <div class="anim-fade-up-4 flex gap-4 justify-center md:justify-start"><a href="#projects" class="btn-primary text-white px-7 py-3 rounded-full font-semibold text-sm inline-flex items-center gap-2"><i data-lucide="folder-open" style="width:16px;height:16px"></i> View Projects</a> <a href="#contact" class="border-2 border-navy-200 text-navy-700 px-7 py-3 rounded-full font-semibold text-sm hover:bg-navy-50 transition-colors inline-flex items-center gap-2"><i data-lucide="mail" style="width:16px;height:16px"></i> Contact Me</a>
+106	+
+      </div>
+107	+
+     </div>
+108	+
+     <div class="flex-shrink-0 anim-float">
+109	+
+      <div class="w-52 h-52 md:w-72 md:h-72 rounded-full flex items-center justify-center" style="background: linear-gradient(135deg, #1a2a6c, #4c6ef5, #748ffc);">
+110	+
+       <svg viewbox="0 0 120 120" class="w-36 h-36 md:w-48 md:h-48"><circle cx="60" cy="42" r="22" fill="rgba(255,255,255,0.9)" /> <ellipse cx="60" cy="95" rx="32" ry="22" fill="rgba(255,255,255,0.9)" /> <circle cx="53" cy="39" r="2.5" fill="#1a2a6c" /><circle cx="67" cy="39" r="2.5" fill="#1a2a6c" /> <path d="M55 48 Q60 53 65 48" stroke="#1a2a6c" stroke-width="2" fill="none" stroke-linecap="round" /> <rect x="48" y="70" width="24" height="3" rx="1.5" fill="rgba(76,110,245,0.5)" /> <rect x="44" y="77" width="32" height="3" rx="1.5" fill="rgba(76,110,245,0.3)" />
+111	+
+       </svg>
+112	+
+      </div>
+113	+
+     </div>
+114	+
+    </div>
+115	+
+   </section><!-- About -->
+116	+
+   <section id="about" class="w-full py-20 bg-white">
+117	+
+    <div class="max-w-6xl mx-auto px-6">
+118	+
+     <div class="reveal text-center mb-14">
+119	+
+      <p class="text-navy-500 font-semibold text-sm tracking-widest uppercase mb-2">Get To Know</p>
+120	+
+      <h2 class="font-heading font-bold text-3xl md:text-4xl text-navy-900">About Me</h2>
+121	+
+     </div>
+122	+
+     <div class="reveal flex flex-col md:flex-row gap-12 items-start">
+123	+
+      <div class="flex-1">
+124	+
+       <p id="about-text" class="text-gray-500 leading-relaxed text-lg mb-8">I'm a 2nd-year BTech Computer Science student with a strong foundation in C programming, web development, and data structures. I love turning ideas into functional code and am constantly learning new technologies to grow as a developer.</p>
+125	+
+       <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+126	+
+        <div class="flex items-center gap-3 bg-navy-50 rounded-xl px-4 py-3">
+127	+
+         <i data-lucide="code-2" class="text-navy-600" style="width:20px;height:20px"></i><span class="text-sm font-medium text-navy-800">C</span>
+128	+
+        </div>
+129	+
+        <div class="flex items-center gap-3 bg-navy-50 rounded-xl px-4 py-3">
+130	+
+         <i data-lucide="globe" class="text-navy-600" style="width:20px;height:20px"></i><span class="text-sm font-medium text-navy-800">HTML</span>
+131	+
+        </div>
+132	+
+        <div class="flex items-center gap-3 bg-navy-50 rounded-xl px-4 py-3">
+133	+
+         <i data-lucide="palette" class="text-navy-600" style="width:20px;height:20px"></i><span class="text-sm font-medium text-navy-800">CSS</span>
+134	+
+        </div>
+135	+
+        <div class="flex items-center gap-3 bg-navy-50 rounded-xl px-4 py-3">
+136	+
+         <i data-lucide="braces" class="text-navy-600" style="width:20px;height:20px"></i><span class="text-sm font-medium text-navy-800">JavaScript</span>
+137	+
+        </div>
+138	+
+        <div class="flex items-center gap-3 bg-navy-50 rounded-xl px-4 py-3">
+139	+
+         <i data-lucide="database" class="text-navy-600" style="width:20px;height:20px"></i><span class="text-sm font-medium text-navy-800">Data Structures</span>
+140	+
+        </div>
+141	+
+        <div class="flex items-center gap-3 bg-navy-50 rounded-xl px-4 py-3">
+142	+
+         <i data-lucide="git-branch" class="text-navy-600" style="width:20px;height:20px"></i><span class="text-sm font-medium text-navy-800">Git</span>
+143	+
+        </div>
+144	+
+       </div>
+145	+
+      </div>
+146	+
+      <div class="flex-shrink-0 grid grid-cols-2 gap-4">
+147	+
+       <div class="bg-gradient-to-br from-navy-700 to-navy-500 text-white rounded-2xl p-6 text-center">
+148	+
+        <p class="font-heading font-bold text-3xl">5+</p>
+149	+
+        <p class="text-xs text-navy-200 mt-1">Projects</p>
+150	+
+       </div>
+151	+
+       <div class="bg-gradient-to-br from-navy-500 to-navy-400 text-white rounded-2xl p-6 text-center">
+152	+
+        <p class="font-heading font-bold text-3xl">2nd</p>
+153	+
+        <p class="text-xs text-navy-200 mt-1">Year</p>
+154	+
+       </div>
+155	+
+       <div class="bg-navy-50 rounded-2xl p-6 text-center col-span-2">
+156	+
+        <p class="font-heading font-bold text-3xl text-navy-700">8.5</p>
+157	+
+        <p class="text-xs text-gray-500 mt-1">CGPA</p>
+158	+
+       </div>
+159	+
+      </div>
+160	+
+     </div>
+161	+
+    </div>
+162	+
+   </section><!-- Projects -->
+163	+
+   <section id="projects" class="w-full py-20" style="background: linear-gradient(180deg, #f8f9ff 0%, #f0f4ff 100%);">
+164	+
+    <div class="max-w-6xl mx-auto px-6">
+165	+
+     <div class="reveal text-center mb-14">
+166	+
+      <p class="text-navy-500 font-semibold text-sm tracking-widest uppercase mb-2">My Work</p>
+167	+
+      <h2 class="font-heading font-bold text-3xl md:text-4xl text-navy-900">Projects</h2>
+168	+
+     </div>
+169	+
+     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+170	+
+      <div class="reveal project-card bg-white rounded-2xl p-6 border border-gray-100 cursor-default">
+171	+
+       <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-navy-700 to-navy-500 flex items-center justify-center mb-5">
+172	+
+        <i data-lucide="layout" class="text-white" style="width:22px;height:22px"></i>
+173	+
+       </div>
+174	+
+       <h3 class="font-heading font-semibold text-lg text-navy-900 mb-2">Portfolio Website</h3>
+175	+
+       <p class="text-gray-500 text-sm leading-relaxed mb-4">A responsive personal portfolio built with HTML, CSS, and JavaScript to showcase projects and skills.</p>
+176	+
+       <div class="flex gap-2 flex-wrap">
+177	+
+        <span class="text-xs bg-navy-50 text-navy-600 px-3 py-1 rounded-full font-medium">HTML</span><span class="text-xs bg-navy-50 text-navy-600 px-3 py-1 rounded-full font-medium">CSS</span><span class="text-xs bg-navy-50 text-navy-600 px-3 py-1 rounded-full font-medium">JS</span>
+178	+
+       </div>
+179	+
+      </div>
+180	+
+      <div class="reveal project-card bg-white rounded-2xl p-6 border border-gray-100 cursor-default">
+181	+
+       <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-navy-600 to-navy-400 flex items-center justify-center mb-5">
+182	+
+        <i data-lucide="database" class="text-white" style="width:22px;height:22px"></i>
+183	+
+       </div>
+184	+
+       <h3 class="font-heading font-semibold text-lg text-navy-900 mb-2">Mini Database System</h3>
+185	+
+       <p class="text-gray-500 text-sm leading-relaxed mb-4">A lightweight CRUD database engine written in C using file handling and linked lists for data management.</p>
+186	+
+       <div class="flex gap-2 flex-wrap">
+187	+
+        <span class="text-xs bg-navy-50 text-navy-600 px-3 py-1 rounded-full font-medium">C</span><span class="text-xs bg-navy-50 text-navy-600 px-3 py-1 rounded-full font-medium">DSA</span>
+188	+
+       </div>
+189	+
+      </div>
+190	+
+      <div class="reveal project-card bg-white rounded-2xl p-6 border border-gray-100 cursor-default">
+191	+
+       <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-navy-500 to-navy-300 flex items-center justify-center mb-5">
+192	+
+        <i data-lucide="file-text" class="text-white" style="width:22px;height:22px"></i>
+193	+
+       </div>
+194	+
+       <h3 class="font-heading font-semibold text-lg text-navy-900 mb-2">File Handling System</h3>
+195	+
+       <p class="text-gray-500 text-sm leading-relaxed mb-4">A C program for reading, writing, and managing student records with binary file operations.</p>
+196	+
+       <div class="flex gap-2 flex-wrap">
+197	+
+        <span class="text-xs bg-navy-50 text-navy-600 px-3 py-1 rounded-full font-medium">C</span><span class="text-xs bg-navy-50 text-navy-600 px-3 py-1 rounded-full font-medium">File I/O</span>
+198	+
+       </div>
+199	+
+      </div>
+200	+
+     </div>
+201	+
+    </div>
+202	+
+   </section><!-- Skills -->
+203	+
+   <section id="skills" class="w-full py-20 bg-white">
+204	+
+    <div class="max-w-6xl mx-auto px-6">
+205	+
+     <div class="reveal text-center mb-14">
+206	+
+      <p class="text-navy-500 font-semibold text-sm tracking-widest uppercase mb-2">Proficiency</p>
+207	+
+      <h2 class="font-heading font-bold text-3xl md:text-4xl text-navy-900">Skills</h2>
+208	+
+     </div>
+209	+
+     <div class="reveal max-w-2xl mx-auto space-y-6" id="skills-container">
+210	+
+      <div class="skill-item">
+211	+
+       <div class="flex justify-between mb-2">
+212	+
+        <span class="font-medium text-navy-800 text-sm">C Programming</span><span class="text-xs text-gray-400">85%</span>
+213	+
+       </div>
+214	+
+       <div class="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+215	+
+        <div class="skill-bar-fill" style="--target-width:85%;background:linear-gradient(90deg,#1a2a6c,#4c6ef5)"></div>
+216	+
+       </div>
+217	+
+      </div>
+218	+
+      <div class="skill-item">
+219	+
+       <div class="flex justify-between mb-2">
+220	+
+        <span class="font-medium text-navy-800 text-sm">HTML &amp; CSS</span><span class="text-xs text-gray-400">90%</span>
+221	+
+       </div>
+222	+
+       <div class="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+223	+
+        <div class="skill-bar-fill" style="--target-width:90%;background:linear-gradient(90deg,#1a2a6c,#4c6ef5)"></div>
+224	+
+       </div>
+225	+
+      </div>
+226	+
+      <div class="skill-item">
+227	+
+       <div class="flex justify-between mb-2">
+228	+
+        <span class="font-medium text-navy-800 text-sm">JavaScript</span><span class="text-xs text-gray-400">70%</span>
+229	+
+       </div>
+230	+
+       <div class="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+231	+
+        <div class="skill-bar-fill" style="--target-width:70%;background:linear-gradient(90deg,#1a2a6c,#4c6ef5)"></div>
+232	+
+       </div>
+233	+
+      </div>
+234	+
+      <div class="skill-item">
+235	+
+       <div class="flex justify-between mb-2">
+236	+
+        <span class="font-medium text-navy-800 text-sm">Data Structures</span><span class="text-xs text-gray-400">75%</span>
+237	+
+       </div>
+238	+
+       <div class="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+239	+
+        <div class="skill-bar-fill" style="--target-width:75%;background:linear-gradient(90deg,#1a2a6c,#4c6ef5)"></div>
+240	+
+       </div>
+241	+
+      </div>
+242	+
+      <div class="skill-item">
+243	+
+       <div class="flex justify-between mb-2">
+244	+
+        <span class="font-medium text-navy-800 text-sm">Git &amp; GitHub</span><span class="text-xs text-gray-400">65%</span>
+245	+
+       </div>
+246	+
+       <div class="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+247	+
+        <div class="skill-bar-fill" style="--target-width:65%;background:linear-gradient(90deg,#1a2a6c,#4c6ef5)"></div>
+248	+
+       </div>
+249	+
+      </div>
+250	+
+     </div>
+251	+
+    </div>
+252	+
+   </section><!-- Contact -->
+253	+
+   <section id="contact" class="w-full py-20" style="background: linear-gradient(160deg, #0a1235 0%, #1a2a6c 100%);">
+254	+
+    <div class="max-w-6xl mx-auto px-6">
+255	+
+     <div class="reveal text-center mb-14">
+256	+
+      <p class="text-navy-400 font-semibold text-sm tracking-widest uppercase mb-2">Get In Touch</p>
+257	+
+      <h2 class="font-heading font-bold text-3xl md:text-4xl text-white">Contact Me</h2>
+258	+
+     </div>
+259	+
+     <div class="reveal flex flex-col md:flex-row gap-10">
+260	+
+      <div class="flex-1 space-y-6">
+261	+
+       <div class="flex items-center gap-4">
+262	+
+        <div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
+263	+
+         <i data-lucide="mail" class="text-navy-300" style="width:20px;height:20px"></i>
+264	+
+        </div>
+265	+
+        <div>
+266	+
+         <p class="text-xs text-navy-400 uppercase tracking-wider">Email</p>
+267	+
+         <p id="contact-email" class="text-white font-medium">arjun.kumar@email.com</p>
+268	+
+        </div>
+269	+
+       </div>
+270	+
+       <div class="flex items-center gap-4">
+271	+
+        <div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
+272	+
+         <i data-lucide="phone" class="text-navy-300" style="width:20px;height:20px"></i>
+273	+
+        </div>
+274	+
+        <div>
+275	+
+         <p class="text-xs text-navy-400 uppercase tracking-wider">Phone</p>
+276	+
+         <p id="contact-phone" class="text-white font-medium">+91 98765 43210</p>
+277	+
+        </div>
+278	+
+       </div>
+279	+
+       <div class="flex items-center gap-4">
+280	+
+        <div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
+281	+
+         <i data-lucide="map-pin" class="text-navy-300" style="width:20px;height:20px"></i>
+282	+
+        </div>
+283	+
+        <div>
+284	+
+         <p class="text-xs text-navy-400 uppercase tracking-wider">Location</p>
+285	+
+         <p class="text-white font-medium">New Delhi, India</p>
+286	+
+        </div>
+287	+
+       </div>
+288	+
+       <div class="flex gap-3 pt-4"><a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"><i data-lucide="github" class="text-white" style="width:18px;height:18px"></i></a> <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"><i data-lucide="linkedin" class="text-white" style="width:18px;height:18px"></i></a> <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"><i data-lucide="twitter" class="text-white" style="width:18px;height:18px"></i></a>
+289	+
+       </div>
+290	+
+      </div>
+291	+
+      <div class="flex-1">
+292	+
+       <form id="contact-form" class="space-y-4">
+293	+
+        <div>
+294	+
+         <label for="cf-name" class="text-xs text-navy-400 uppercase tracking-wider mb-1 block">Name</label><input id="cf-name" type="text" placeholder="Your Name" class="w-full bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-navy-400 text-sm focus:outline-none focus:border-navy-400 transition-colors">
+295	+
+        </div>
+296	+
+        <div>
+297	+
+         <label for="cf-email" class="text-xs text-navy-400 uppercase tracking-wider mb-1 block">Email</label><input id="cf-email" type="email" placeholder="your@email.com" class="w-full bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-navy-400 text-sm focus:outline-none focus:border-navy-400 transition-colors">
+298	+
+        </div>
+299	+
+        <div>
+300	+
+         <label for="cf-msg" class="text-xs text-navy-400 uppercase tracking-wider mb-1 block">Message</label><textarea id="cf-msg" rows="4" placeholder="Your message..." class="w-full bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-navy-400 text-sm focus:outline-none focus:border-navy-400 transition-colors resize-none"></textarea>
+301	+
+        </div><button type="submit" class="btn-primary text-white px-8 py-3 rounded-full font-semibold text-sm inline-flex items-center gap-2 w-full justify-center"><i data-lucide="send" style="width:16px;height:16px"></i> Send Message</button>
+302	+
+        <p id="form-success" class="text-green-400 text-sm text-center hidden">Message sent! Thank you.</p>
+303	+
+       </form>
+304	+
+      </div>
+305	+
+     </div>
+306	+
+    </div>
+307	+
+   </section><!-- Footer -->
+308	+
+   <footer class="w-full bg-navy-900 py-8">
+309	+
+    <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+310	+
+     <p class="text-navy-400 text-sm">© 2025 <span id="footer-name">Arjun Kumar</span>. All rights reserved.</p>
+311	+
+     <div class="flex gap-4"><a href="#" class="text-navy-400 hover:text-white transition-colors"><i data-lucide="github" style="width:18px;height:18px"></i></a> <a href="#" class="text-navy-400 hover:text-white transition-colors"><i data-lucide="linkedin" style="width:18px;height:18px"></i></a> <a href="#" class="text-navy-400 hover:text-white transition-colors"><i data-lucide="twitter" style="width:18px;height:18px"></i></a>
+312	+
+     </div>
+313	+
+    </div>
+314	+
+   </footer>
+315	+
+  </div>
+316	+
+  <script>
+317	+
+const defaultConfig = {
+318	+
+  student_name: 'Arjun Kumar',
+319	+
+  tagline: 'Aspiring Developer | BTech Student',
+320	+
+  hero_intro: 'Passionate about building clean, functional software. Currently pursuing BTech in Computer Science with a focus on web development and data structures.',
+321	+
+  about_text: "I'm a 2nd-year BTech Computer Science student with a strong foundation in C programming, web development, and data structures. I love turning ideas into functional code and am constantly learning new technologies to grow as a developer.",
+322	+
+  email_address: 'arjun.kumar@email.com',
+323	+
+  phone_number: '+91 98765 43210',
+324	+
+  background_color: '#f0f4ff',
+325	+
+  surface_color: '#ffffff',
+326	+
+  text_color: '#0a1235',
+327	+
+  primary_action_color: '#4c6ef5',
+328	+
+  secondary_action_color: '#1a2a6c',
+329	+
+  font_family: 'Poppins',
+330	+
+  font_size: 16
+331	+
+};
+332	+
+333	+
+function applyConfig(config) {
+334	+
+  const c = { ...defaultConfig, ...config };
+335	+
+  const el = (id) => document.getElementById(id);
+336	+
+337	+
+  el('hero-name').textContent = c.student_name;
+338	+
+  el('hero-tagline').textContent = c.tagline;
+339	+
+  el('hero-intro').textContent = c.hero_intro;
+340	+
+  el('about-text').textContent = c.about_text;
+341	+
+  el('contact-email').textContent = c.email_address;
+342	+
+  el('contact-phone').textContent = c.phone_number;
+343	+
+  el('footer-name').textContent = c.student_name;
+344	+
+  el('nav-name').textContent = c.student_name.split(' ').map(w=>w[0]).join('');
+345	+
+346	+
+  // Font
+347	+
+  const font = c.font_family || defaultConfig.font_family;
+348	+
+  document.querySelectorAll('.font-heading, h1, h2, h3').forEach(e => e.style.fontFamily = `${font}, Poppins, sans-serif`);
+349	+
+  
+350	+
+  // Font size
+351	+
+  const base = c.font_size || defaultConfig.font_size;
+352	+
+  el('hero-name').style.fontSize = `${base * 3}px`;
+353	+
+  el('hero-tagline').style.fontSize = `${base * 1.25}px`;
+354	+
+  el('hero-intro').style.fontSize = `${base}px`;
+355	+
+  el('about-text').style.fontSize = `${base * 1.1}px`;
+356	+
+}
+357	+
+358	+
+// Element SDK
+359	+
+window.elementSdk.init({
+360	+
+  defaultConfig,
+361	+
+  onConfigChange: async (config) => applyConfig(config),
+362	+
+  mapToCapabilities: (config) => ({
+363	+
+    recolorables: [
+364	+
+      { get: () => config.background_color || defaultConfig.background_color, set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
+365	+
+      { get: () => config.surface_color || defaultConfig.surface_color, set: (v) => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); } },
+366	+
+      { get: () => config.text_color || defaultConfig.text_color, set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+367	+
+      { get: () => config.primary_action_color || defaultConfig.primary_action_color, set: (v) => { config.primary_action_color = v; window.elementSdk.setConfig({ primary_action_color: v }); } },
+368	+
+      { get: () => config.secondary_action_color || defaultConfig.secondary_action_color, set: (v) => { config.secondary_action_color = v; window.elementSdk.setConfig({ secondary_action_color: v }); } }
+369	+
+    ],
+370	+
+    borderables: [],
+371	+
+    fontEditable: {
+372	+
+      get: () => config.font_family || defaultConfig.font_family,
+373	+
+      set: (v) => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); }
+374	+
+    },
+375	+
+    fontSizeable: {
+376	+
+      get: () => config.font_size || defaultConfig.font_size,
+377	+
+      set: (v) => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); }
+378	+
+    }
+379	+
+  }),
+380	+
+  mapToEditPanelValues: (config) => new Map([
+381	+
+    ['student_name', config.student_name || defaultConfig.student_name],
+382	+
+    ['tagline', config.tagline || defaultConfig.tagline],
+383	+
+    ['hero_intro', config.hero_intro || defaultConfig.hero_intro],
+384	+
+    ['about_text', config.about_text || defaultConfig.about_text],
+385	+
+    ['email_address', config.email_address || defaultConfig.email_address],
+386	+
+    ['phone_number', config.phone_number || defaultConfig.phone_number]
+387	+
+  ])
+388	+
+});
+389	+
+390	+
+// Mobile menu
+391	+
+document.getElementById('mobile-toggle').addEventListener('click', () => {
+392	+
+  document.getElementById('mobile-menu').classList.toggle('hidden');
+393	+
+});
+394	+
+document.querySelectorAll('#mobile-menu a').forEach(a => a.addEventListener('click', () => {
+395	+
+  document.getElementById('mobile-menu').classList.add('hidden');
+396	+
+}));
+397	+
+398	+
+// Contact form
+399	+
+document.getElementById('contact-form').addEventListener('submit', (e) => {
+400	+
+  e.preventDefault();
+401	+
+  document.getElementById('form-success').classList.remove('hidden');
+402	+
+  e.target.reset();
+403	+
+  setTimeout(() => document.getElementById('form-success').classList.add('hidden'), 3000);
+404	+
+});
+405	+
+406	+
+// Scroll reveal
+407	+
+const observer = new IntersectionObserver((entries) => {
+408	+
+  entries.forEach(entry => {
+409	+
+    if (entry.isIntersecting) {
+410	+
+      entry.target.classList.add('visible');
+411	+
+      entry.target.querySelectorAll('.skill-bar-fill').forEach(bar => bar.classList.add('animate'));
+412	+
+    }
+413	+
+  });
+414	+
+}, { threshold: 0.15 });
+415	+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+416	+
+417	+
+lucide.createIcons();
+418	+
+</script>
+419	+
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9ea93aa9a2c50b2c',t:'MTc3NTkwMjUxNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+420	+
+</html>
