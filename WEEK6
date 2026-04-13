@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Smart Quiz System</title>
+
+<style>
+
+body{
+font-family: Arial;
+background: linear-gradient(135deg,#4facfe,#00f2fe);
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.quiz-container{
+background:white;
+width:600px;
+padding:30px;
+border-radius:12px;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+h1{
+text-align:center;
+}
+
+#timer{
+font-weight:bold;
+color:red;
+text-align:right;
+}
+
+.progress{
+height:8px;
+background:#eee;
+margin-bottom:20px;
+border-radius:5px;
+}
+
+.progress-bar{
+height:8px;
+background:#4facfe;
+width:0%;
+border-radius:5px;
+}
+
+.option{
+display:block;
+padding:10px;
+margin:8px 0;
+border:1px solid #ccc;
+border-radius:6px;
+cursor:pointer;
+}
+
+.option:hover{
+background:#f0f8ff;
+}
+
+button{
+margin-top:20px;
+padding:12px;
+width:100%;
+border:none;
+background:#4facfe;
+color:white;
+font-size:16px;
+border-radius:6px;
+cursor:pointer;
+}
+
+button:hover{
+background:#0077ff;
+}
+
+#leaderboard{
+margin-top:20px;
+background:#f7f7f7;
+padding:10px;
+border-radius:8px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="quiz-container">
+
+<h1>Student Quiz</h1>
+
+<div id="timer">Time: 30s</div>
+
+<div class="progress">
+<div class="progress-bar" id="progress"></div>
+</div>
+
+<h3 id="question"></h3>
+
+<div id="options"></div>
+
+<button onclick="nextQuestion()">Next Question</button>
+
+<h2 id="result"></h2>
+
+<div id="leaderboard">
+<h3>Leaderboard</h3>
+<ul id="scores"></ul>
+</div>
+
+</div>
+
+<script>
+
+const quiz = [
+
+{
+question:"What does HTML stand for?",
+options:["Hyper Tool Markup Language","Hyper Text Markup Language","Home Text Markup Language","Hyperlinks Text Language"],
+answer:1
+},
+
+{
+question:"Which language is used for styling webpages?",
+options:["HTML","CSS","Python","C++"],
+answer:1
+},
+
+{
+question:"JavaScript is used for?",
+options:["Web Interactivity","Database","Hardware","Networking"],
+answer:0
+},
+
+{
+question:"Which tag is used for the largest heading?",
+options:["h1","p","div","span"],
+answer:0
+},
+
+{
+question:"Which symbol represents ID selector in CSS?",
+options:["#",".","*","&"],
+answer:0
+}
+
+];
+
+let current = 0;
+let score = 0;
+let time = 30;
+
+function loadQuestion(){
+
+let q = quiz[current];
+
+document.getElementById("question").innerText =
+(current+1)+". "+q.question;
+
+let optionsHTML="";
+
+q.options.forEach((opt,index)=>{
+optionsHTML+=
+`<label class="option">
+<input type="radio" name="opt" value="${index}">
+${opt}
+</label>`;
+});
+
+document.getElementById("options").innerHTML = optionsHTML;
+
+document.getElementById("progress").style.width =
+((current)/quiz.length)*100 + "%";
+
+}
+
+function nextQuestion(){
+
+let selected = document.querySelector('input[name="opt"]:checked');
+
+if(selected){
+
+if(Number(selected.value) === quiz[current].answer){
+score++;
+}
+
+}
+
+current++;
+
+if(current < quiz.length){
+
+loadQuestion();
+
+}else{
+
+showResult();
+
+}
+
+}
+
+function showResult(){
+
+document.getElementById("question").style.display="none";
+document.getElementById("options").style.display="none";
+
+document.getElementById("result").innerText =
+"Your Score: "+score+" / "+quiz.length;
+
+saveScore(score);
+showLeaderboard();
+
+}
+
+function timer(){
+
+let t = setInterval(()=>{
+
+time--;
+
+document.getElementById("timer").innerText =
+"Time: "+time+"s";
+
+if(time<=0){
+
+clearInterval(t);
+showResult();
+
+}
+
+},1000);
+
+}
+
+function saveScore(s){
+
+let scores = JSON.parse(localStorage.getItem("quizScores")) || [];
+
+scores.push(s);
+
+localStorage.setItem("quizScores",JSON.stringify(scores));
+
+}
+
+function showLeaderboard(){
+
+let scores = JSON.parse(localStorage.getItem("quizScores")) || [];
+
+let list="";
+
+scores.slice(-5).reverse().forEach((s,i)=>{
+list += `<li>Player ${i+1}: ${s}</li>`;
+});
+
+document.getElementById("scores").innerHTML=list;
+
+}
+
+loadQuestion();
+timer();
+showLeaderboard();
+
+</script>
+
+</body>
+</html>
