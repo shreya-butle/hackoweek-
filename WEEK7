@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced To-Do App</title>
+
+<style>
+
+body{
+font-family: Arial, sans-serif;
+background:#f4f4f4;
+margin:0;
+padding:0;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.dark{
+background:#1e1e1e;
+color:white;
+}
+
+.container{
+background:white;
+padding:25px;
+border-radius:10px;
+width:420px;
+box-shadow:0 10px 20px rgba(0,0,0,0.2);
+}
+
+.dark .container{
+background:#2a2a2a;
+}
+
+h2{
+text-align:center;
+}
+
+.input-area{
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+input,select{
+padding:10px;
+border:1px solid #ccc;
+border-radius:5px;
+}
+
+button{
+padding:10px;
+border:none;
+background:#4CAF50;
+color:white;
+border-radius:5px;
+cursor:pointer;
+}
+
+button:hover{
+background:#45a049;
+}
+
+ul{
+list-style:none;
+padding:0;
+margin-top:20px;
+}
+
+li{
+padding:10px;
+margin-bottom:10px;
+border-radius:5px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+background:#eee;
+}
+
+.completed{
+text-decoration: line-through;
+opacity:0.6;
+}
+
+.priority-high{border-left:5px solid red;}
+.priority-medium{border-left:5px solid orange;}
+.priority-low{border-left:5px solid green;}
+
+.task-info{
+display:flex;
+flex-direction:column;
+}
+
+.controls button{
+margin-left:5px;
+background:#2196F3;
+}
+
+.delete{
+background:red;
+}
+
+.top-bar{
+display:flex;
+justify-content:space-between;
+margin-bottom:10px;
+}
+
+.filter button{
+background:#777;
+margin-right:5px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="top-bar">
+<h2>To-Do List</h2>
+<button onclick="toggleDark()">🌙</button>
+</div>
+
+<div class="input-area">
+
+<input type="text" id="taskInput" placeholder="Enter task">
+
+<select id="priority">
+<option value="low">Low Priority</option>
+<option value="medium">Medium Priority</option>
+<option value="high">High Priority</option>
+</select>
+
+<input type="date" id="dueDate">
+
+<button onclick="addTask()">Add Task</button>
+
+</div>
+
+<div class="filter">
+<button onclick="filterTasks('all')">All</button>
+<button onclick="filterTasks('completed')">Completed</button>
+<button onclick="filterTasks('pending')">Pending</button>
+</div>
+
+<ul id="taskList"></ul>
+
+</div>
+
+<script>
+
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+let filter = "all";
+
+function save(){
+localStorage.setItem("tasks",JSON.stringify(tasks));
+}
+
+function addTask(){
+
+let text=document.getElementById("taskInput").value;
+let priority=document.getElementById("priority").value;
+let date=document.getElementById("dueDate").value;
+
+if(text==="") return;
+
+tasks.push({
+text:text,
+priority:priority,
+date:date,
+completed:false
+});
+
+document.getElementById("taskInput").value="";
+display();
+save();
+}
+
+function display(){
+
+let list=document.getElementById("taskList");
+list.innerHTML="";
+
+tasks.forEach((task,index)=>{
+
+if(filter==="completed" && !task.completed) return;
+if(filter==="pending" && task.completed) return;
+
+let li=document.createElement("li");
+
+li.className="priority-"+task.priority;
+if(task.completed) li.classList.add("completed");
+
+li.innerHTML=`
+
+<div class="task-info">
+<strong>${task.text}</strong>
+<small>Due: ${task.date || "No date"} | Priority: ${task.priority}</small>
+</div>
+
+<div class="controls">
+
+<button onclick="toggle(${index})">✓</button>
+<button onclick="editTask(${index})">Edit</button>
+<button class="delete" onclick="removeTask(${index})">X</button>
+
+</div>
+
+`;
+
+list.appendChild(li);
+
+});
+
+}
+
+function toggle(index){
+tasks[index].completed=!tasks[index].completed;
+save();
+display();
+}
+
+function removeTask(index){
+tasks.splice(index,1);
+save();
+display();
+}
+
+function editTask(index){
+
+let newText=prompt("Edit task",tasks[index].text);
+
+if(newText){
+tasks[index].text=newText;
+save();
+display();
+}
+
+}
+
+function filterTasks(type){
+filter=type;
+display();
+}
+
+function toggleDark(){
+document.body.classList.toggle("dark");
+}
+
+display();
+
+</script>
+
+</body>
+</html>
