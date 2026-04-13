@@ -1,0 +1,695 @@
+<!doctype html>
+
+
+2	+
+<html lang="en" class="h-full">
+3	+
+ <head>
+4	+
+  <meta charset="UTF-8">
+5	+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+6	+
+  <title>Bank ATM Queue Presentation</title>
+7	+
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+8	+
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+9	+
+  <script src="/_sdk/element_sdk.js"></script>
+10	+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&amp;family=Inter:wght@400;500&amp;display=swap" rel="stylesheet">
+11	+
+  <script>
+12	+
+tailwind.config = {
+13	+
+  theme: {
+14	+
+    extend: {
+15	+
+      fontFamily: {
+16	+
+        heading: ['Poppins', 'sans-serif'],
+17	+
+        body: ['Inter', 'sans-serif']
+18	+
+      }
+19	+
+    }
+20	+
+  }
+21	+
+}
+22	+
+</script>
+23	+
+  <style>
+24	+
+html, body { height: 100%; margin: 0; }
+25	+
+* { scroll-behavior: smooth; }
+26	+
+27	+
+body {
+28	+
+  background: linear-gradient(135deg, #f8f9fa 0%, #e8f4f8 50%, #f0f4f8 100%);
+29	+
+  color: #1a1a2e;
+30	+
+  overflow-x: hidden;
+31	+
+}
+32	+
+33	+
+@keyframes fadeUp {
+34	+
+  from { opacity: 0; transform: translateY(40px); }
+35	+
+  to { opacity: 1; transform: translateY(0); }
+36	+
+}
+37	+
+@keyframes slideInLeft {
+38	+
+  from { opacity: 0; transform: translateX(-30px); }
+39	+
+  to { opacity: 1; transform: translateX(0); }
+40	+
+}
+41	+
+@keyframes pulse {
+42	+
+  0%, 100% { box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.4); }
+43	+
+  50% { box-shadow: 0 0 0 10px rgba(13, 110, 253, 0); }
+44	+
+}
+45	+
+@keyframes circleFlow {
+46	+
+  0% { opacity: 0; transform: rotate(0deg) translateX(80px) rotate(0deg); }
+47	+
+  50% { opacity: 1; }
+48	+
+  100% { opacity: 0; transform: rotate(360deg) translateX(80px) rotate(-360deg); }
+49	+
+}
+50	+
+51	+
+.anim-fade-up { animation: fadeUp 0.8s ease both; }
+52	+
+.anim-fade-up-1 { animation: fadeUp 0.8s 0.1s ease both; }
+53	+
+.anim-fade-up-2 { animation: fadeUp 0.8s 0.2s ease both; }
+54	+
+.anim-fade-up-3 { animation: fadeUp 0.8s 0.3s ease both; }
+55	+
+.anim-slide-left { animation: slideInLeft 0.6s ease both; }
+56	+
+57	+
+.reveal { opacity: 0; transform: translateY(30px); transition: all 0.7s ease; }
+58	+
+.reveal.visible { opacity: 1; transform: translateY(0); }
+59	+
+60	+
+.feature-item {
+61	+
+  background: linear-gradient(135deg, #e7f4f9 0%, #f0f8fb 100%);
+62	+
+  border-left: 4px solid #0d6efd;
+63	+
+  transition: all 0.3s ease;
+64	+
+  box-shadow: 0 2px 8px rgba(13, 110, 253, 0.1);
+65	+
+}
+66	+
+.feature-item:hover {
+67	+
+  background: linear-gradient(135deg, #d1e9f6 0%, #e8f3f9 100%);
+68	+
+  transform: translateX(5px);
+69	+
+  box-shadow: 0 4px 16px rgba(13, 110, 253, 0.15);
+70	+
+}
+71	+
+72	+
+.queue-box {
+73	+
+  background: linear-gradient(135deg, #fff8f0 0%, #fff5f0 100%);
+74	+
+  border: 2px solid #fd7e14;
+75	+
+  position: relative;
+76	+
+}
+77	+
+.queue-item {
+78	+
+  padding: 12px;
+79	+
+  margin: 6px;
+80	+
+  background: linear-gradient(135deg, #ffe5cc 0%, #ffd4a3 100%);
+81	+
+  border-radius: 6px;
+82	+
+  font-size: 12px;
+83	+
+  color: #d63031;
+84	+
+  font-weight: 600;
+85	+
+  border: 1px solid #ffa94d;
+86	+
+}
+87	+
+88	+
+.circle-queue {
+89	+
+  width: 200px;
+90	+
+  height: 200px;
+91	+
+  border: 3px solid #0d6efd;
+92	+
+  border-radius: 50%;
+93	+
+  position: relative;
+94	+
+  background: linear-gradient(135deg, rgba(13, 110, 253, 0.05) 0%, rgba(13, 110, 253, 0.02) 100%);
+95	+
+}
+96	+
+.queue-position {
+97	+
+  position: absolute;
+98	+
+  width: 36px;
+99	+
+  height: 36px;
+100	+
+  background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%);
+101	+
+  border-radius: 50%;
+102	+
+  display: flex;
+103	+
+  align-items: center;
+104	+
+  justify-content: center;
+105	+
+  color: white;
+106	+
+  font-size: 10px;
+107	+
+  font-weight: bold;
+108	+
+  box-shadow: 0 2px 8px rgba(13, 110, 253, 0.3);
+109	+
+}
+110	+
+111	+
+.green-accent { color: #198754; }
+112	+
+.blue-accent { color: #0d6efd; }
+113	+
+.orange-accent { color: #fd7e14; }
+114	+
+115	+
+.btn-primary {
+116	+
+  background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%);
+117	+
+  color: white;
+118	+
+  padding: 10px 20px;
+119	+
+  border-radius: 6px;
+120	+
+  font-weight: 600;
+121	+
+  border: none;
+122	+
+  cursor: pointer;
+123	+
+  transition: all 0.3s ease;
+124	+
+  box-shadow: 0 2px 8px rgba(13, 110, 253, 0.2);
+125	+
+}
+126	+
+.btn-primary:hover {
+127	+
+  transform: translateY(-2px);
+128	+
+  box-shadow: 0 4px 16px rgba(13, 110, 253, 0.3);
+129	+
+}
+130	+
+131	+
+@media (max-width: 768px) {
+132	+
+  .circle-queue { width: 150px; height: 150px; }
+133	+
+}
+134	+
+</style>
+135	+
+  <style>body { box-sizing: border-box; }</style>
+136	+
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+137	+
+ </head>
+138	+
+ <body class="h-full font-body bg-gradient-to-b from-blue-50 via-cyan-50 to-blue-50">
+139	+
+  <div id="app-wrapper" class="w-full h-full overflow-auto">
+140	+
+   <!-- Header -->
+141	+
+   <header class="relative w-full pt-16 pb-12 text-center overflow-hidden">
+142	+
+    <div class="absolute inset-0 opacity-10">
+143	+
+     <div class="absolute top-0 left-1/4 w-64 h-64 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl"></div>
+144	+
+     <div class="absolute top-20 right-1/4 w-64 h-64 bg-green-400 rounded-full mix-blend-multiply filter blur-3xl"></div>
+145	+
+    </div>
+146	+
+    <div class="relative z-10">
+147	+
+     <p class="anim-fade-up text-xs tracking-[0.15em] text-blue-600 uppercase font-bold mb-3">[ Data Structures Project ]</p>
+148	+
+     <h1 id="project-title" class="anim-fade-up-1 font-heading text-5xl md:text-6xl font-bold text-gray-900 mb-2">Bank ATM Queue</h1>
+149	+
+     <p class="anim-fade-up-2 text-lg md:text-xl text-green-600 font-semibold">(Circular Queue)</p>
+150	+
+    </div>
+151	+
+   </header><!-- Concept Section -->
+152	+
+   <section class="w-full py-16 px-6">
+153	+
+    <div class="max-w-5xl mx-auto">
+154	+
+     <div class="reveal bg-white rounded-lg p-8 md:p-12 shadow-lg border-l-4 border-blue-500">
+155	+
+      <div class="flex items-start gap-4 mb-6">
+156	+
+       <i data-lucide="lightbulb" class="text-blue-600 flex-shrink-0" style="width:28px;height:28px"></i>
+157	+
+       <div>
+158	+
+        <p class="text-xs tracking-widest text-blue-600 uppercase font-bold mb-2">Concept</p>
+159	+
+        <p id="concept-desc" class="text-gray-700 text-lg leading-relaxed font-body">Simulate a customer service system using circular queue data structure, enabling efficient FIFO (First In First Out) customer management at ATM counters.</p>
+160	+
+       </div>
+161	+
+      </div>
+162	+
+     </div>
+163	+
+    </div>
+164	+
+   </section><!-- Features Section -->
+165	+
+   <section class="w-full py-16 px-6">
+166	+
+    <div class="max-w-5xl mx-auto">
+167	+
+     <p class="text-xs tracking-widest text-blue-600 uppercase font-bold mb-8">[ Key Features ]</p>
+168	+
+     <div class="grid md:grid-cols-2 gap-6">
+169	+
+      <div class="reveal feature-item rounded-lg p-6">
+170	+
+       <div class="flex items-center gap-3 mb-3">
+171	+
+        <i data-lucide="user-plus" class="text-blue-600" style="width:20px;height:20px"></i> <span class="text-blue-700 font-bold text-sm">Enqueue Customers</span>
+172	+
+       </div>
+173	+
+       <p class="text-gray-600 text-sm">Add customers to the circular queue at the rear position</p>
+174	+
+      </div>
+175	+
+      <div class="reveal feature-item rounded-lg p-6" style="animation-delay: 0.1s">
+176	+
+       <div class="flex items-center gap-3 mb-3">
+177	+
+        <i data-lucide="user-check" class="text-green-600" style="width:20px;height:20px"></i> <span class="text-green-700 font-bold text-sm">Dequeue Customers</span>
+178	+
+       </div>
+179	+
+       <p class="text-gray-600 text-sm">Serve customers in order from the front (FIFO principle)</p>
+180	+
+      </div>
+181	+
+      <div class="reveal feature-item rounded-lg p-6" style="animation-delay: 0.2s">
+182	+
+       <div class="flex items-center gap-3 mb-3">
+183	+
+        <i data-lucide="alert-circle" class="text-orange-600" style="width:20px;height:20px"></i> <span class="text-orange-700 font-bold text-sm">Full/Empty Check</span>
+184	+
+       </div>
+185	+
+       <p class="text-gray-600 text-sm">Detect queue overflow and underflow conditions</p>
+186	+
+      </div>
+187	+
+      <div class="reveal feature-item rounded-lg p-6" style="animation-delay: 0.3s">
+188	+
+       <div class="flex items-center gap-3 mb-3">
+189	+
+        <i data-lucide="repeat" class="text-purple-600" style="width:20px;height:20px"></i> <span class="text-purple-700 font-bold text-sm">Circular Wrap-Around</span>
+190	+
+       </div>
+191	+
+       <p class="text-gray-600 text-sm">Efficiently reuse memory with circular array structure</p>
+192	+
+      </div>
+193	+
+     </div>
+194	+
+    </div>
+195	+
+   </section><!-- Circular Queue Visualization -->
+196	+
+   <section class="w-full py-16 px-6 bg-gradient-to-r from-blue-50 to-green-50">
+197	+
+    <div class="max-w-5xl mx-auto">
+198	+
+     <p class="text-xs tracking-widest text-blue-600 uppercase font-bold mb-12 text-center">[ How It Works ]</p>
+199	+
+     <div class="grid md:grid-cols-2 gap-12 items-center">
+200	+
+      <!-- Circular Queue Diagram -->
+201	+
+      <div class="reveal flex justify-center">
+202	+
+       <div class="circle-queue">
+203	+
+        <div class="queue-position" style="top: 10%; left: 50%; transform: translateX(-50%)"><i data-lucide="arrow-up" style="width:14px;height:14px"></i>
+204	+
+        </div>
+205	+
+        <div class="queue-position" style="top: 25%; right: 15%">
+206	+
+         1
+207	+
+        </div>
+208	+
+        <div class="queue-position" style="bottom: 25%; right: 15%">
+209	+
+         2
+210	+
+        </div>
+211	+
+        <div class="queue-position" style="bottom: 10%; left: 50%; transform: translateX(-50%)">
+212	+
+         3
+213	+
+        </div>
+214	+
+        <div class="queue-position" style="bottom: 25%; left: 15%">
+215	+
+         4
+216	+
+        </div>
+217	+
+        <div class="queue-position" style="top: 25%; left: 15%"><i data-lucide="arrow-down" style="width:14px;height:14px"></i>
+218	+
+        </div>
+219	+
+       </div>
+220	+
+      </div><!-- Operations -->
+221	+
+      <div class="reveal" style="animation-delay: 0.1s">
+222	+
+       <div class="bg-white rounded-lg p-8 shadow-lg">
+223	+
+        <p class="text-xs tracking-widest text-blue-600 uppercase font-bold mb-6">Queue Operations</p>
+224	+
+        <div class="space-y-4">
+225	+
+         <div class="flex items-start gap-4 p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500"><i data-lucide="arrow-down-right" class="text-blue-600 flex-shrink-0" style="width:20px;height:20px"></i>
+226	+
+          <div>
+227	+
+           <p class="text-blue-700 font-bold text-sm">ENQUEUE</p>
+228	+
+           <p class="text-gray-600 text-xs mt-1">Add customer to rear → rear = (rear + 1) % size</p>
+229	+
+          </div>
+230	+
+         </div>
+231	+
+         <div class="flex items-start gap-4 p-4 bg-green-50 rounded-lg border-l-4 border-green-500"><i data-lucide="arrow-up-left" class="text-green-600 flex-shrink-0" style="width:20px;height:20px"></i>
+232	+
+          <div>
+233	+
+           <p class="text-green-700 font-bold text-sm">DEQUEUE</p>
+234	+
+           <p class="text-gray-600 text-xs mt-1">Remove from front → front = (front + 1) % size</p>
+235	+
+          </div>
+236	+
+         </div>
+237	+
+         <div class="flex items-start gap-4 p-4 bg-orange-50 rounded-lg border-l-4 border-orange-500"><i data-lucide="eye" class="text-orange-600 flex-shrink-0" style="width:20px;height:20px"></i>
+238	+
+          <div>
+239	+
+           <p class="text-orange-700 font-bold text-sm">CHECK EMPTY/FULL</p>
+240	+
+           <p class="text-gray-600 text-xs mt-1">Validate conditions before operations</p>
+241	+
+          </div>
+242	+
+         </div>
+243	+
+        </div>
+244	+
+       </div>
+245	+
+      </div>
+246	+
+     </div>
+247	+
+    </div>
+248	+
+   </section><!-- Use Case Section -->
+249	+
+   <section class="w-full py-16 px-6">
+250	+
+    <div class="max-w-5xl mx-auto">
+251	+
+     <p class="text-xs tracking-widest text-blue-600 uppercase font-bold mb-8">[ Real-World Use Case ]</p>
+252	+
+     <div class="reveal bg-gradient-to-r from-blue-500 to-green-500 rounded-lg p-1">
+253	+
+      <div class="bg-white rounded-lg p-8">
+254	+
+       <div class="flex items-start gap-6">
+255	+
+        <div class="flex-shrink-0"><i data-lucide="building-2" class="text-blue-600" style="width:40px;height:40px"></i>
+256	+
+        </div>
+257	+
+        <div>
+258	+
+         <p id="use-case-text" class="text-gray-800 text-base leading-relaxed"><strong class="text-blue-600">ATM or Bank Service System:</strong> When customers arrive at an ATM or bank counter, they join a queue. The first customer to arrive is served first. The circular queue ensures memory-efficient management even when multiple customers are processed throughout the day. As customers are served (dequeued), new arrivals can take their place, optimizing the use of available memory space.</p>
+259	+
+        </div>
+260	+
+       </div>
+261	+
+      </div>
+262	+
+     </div>
+263	+
+    </div>
+264	+
+   </section><!-- Technical Implementation -->
+265	+
+   <section class="w-full py-16 px-6 bg-gray-50">
+266	+
+    <div class="max-w-5xl mx-auto">
+267	+
+     <p class="text-xs tracking-widest text-blue-600 uppercase font-bold mb-8">[ Technical Stack ]</p>
+268	+
+     <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4">
+269	+
+      <div class="reveal bg-white rounded-lg p-6 text-center shadow-md hover:shadow-lg transition-shadow" style="animation-delay: 0s">
+270	+
+       <i data-lucide="code" class="text-blue-600 mx-auto mb-3" style="width:28px;height:28px"></i>
+271	+
+       <p class="text-sm font-bold text-gray-800">C Language</p>
+272	+
+      </div>
+273	+
+      <div class="reveal bg-white rounded-lg p-6 text-center shadow-md hover:shadow-lg transition-shadow" style="animation-delay: 0.05s">
+274	+
+       <i data-lucide="database" class="text-green-600 mx-auto mb-3" style="width:28px;height:28px"></i>
+275	+
+       <p class="text-sm font-bold text-gray-800">Circular Queue</p>
+276	+
+      </div>
+277	+
+      <div class="reveal bg-white rounded-lg p-6 text-center shadow-md hover:shadow-lg transition-shadow" style="animation-delay: 0.1s">
+278	+
+       <i data-lucide="layers" class="text-orange-600 mx-auto mb-3" style="width:28px;height:28px"></i>
+279	+
+       <p class="text-sm font-bold text-gray-800">Array Structure</p>
+280	+
+      </div>
+281	+
+      <div class="reveal bg-white rounded-lg p-6 text-center shadow-md hover:shadow-lg transition-shadow" style="animation-delay: 0.15s">
+282	+
+       <i data-lucide="zap" class="text-purple-600 mx-auto mb-3" style="width:28px;height:28px"></i>
+283	+
+       <p class="text-sm font-bold text-gray-800">FIFO Principle</p>
+284	+
+      </div>
+285	+
+     </div>
+286	+
+    </div>
+287	+
+   </section><!-- Footer -->
+288	+
+   <footer class="w-full bg-gradient-to-r from-blue-100 to-green-100 border-t border-blue-300 mt-20 py-12 px-6">
+289	+
+    <div class="max-w-5xl mx-auto">
+290	+
+     <div class="text-center">
+291	+
+      <div class="mb-4 pb-4 border-b border-blue-400">
+292	+
+       <p class="text-blue-600 text-sm font-semibold mb-1">━━━━━━━━━━━━━━━━━━━━━━━━━━━━</p>
+293	+
+       <p id="footer-student" class="text-gray-900 font-heading font-bold text-lg">Your Name</p>
+294	+
+       <p id="footer-course" class="text-gray-700 text-sm font-medium">BTech CSE | Semester 3</p>
+295	+
+       <p class="text-blue-600 text-sm font-semibold mt-1">━━━━━━━━━━━━━━━━━━━━━━━━━━━━</p>
+296	+
+      </div>
+297	+
+      <p class="text-gray-700 text-xs">Data Structures &amp; Algorithms Project | Circular Queue Implementation</p>
+298	+
+     </div>
+299	+
+    </div>
+300	+
+   </footer>
+301	+
+  </div>
+302	+
+  <script>
+303	+
+const defaultConfig = {
+304	+
+  project_title: 'Bank ATM Queue (Circular Queue)',
+305	+
+  concept_text: 'Simulate a customer service system using circular queue data structure, enabling efficient FIFO (First In First Out) customer management at ATM counters.',
+306	+
+  use_case_text: 'ATM or Bank Service System: When customers arrive at an ATM or bank counter, they join a queue. The first customer to arrive is served first. The circular queue ensures memory-efficient management even when multiple customers are processed throughout the day. As customers are served (dequeued), new arrivals can take their place, optimizing the use of available memory space.',
+307	+
+  student_name: 'Your Name',
+308	+
+  course_details: 'BTech CSE | Semester 3'
+309	+
+};
+310	+
+311	+
+function applyConfig(config) {
+312	+
+  const c = { ...defaultConfig, ...config };
+313	+
+  const el = (id) => document.getElementById(id);
+314	+
+315	+
+  if (el('project-title')) el('project-title').textContent = c.project_title;
+316	+
+  if (el('concept-desc')) el('concept-desc').textContent = c.concept_text;
+317	+
+  if (el('use-case-text')) el('use-case-text').innerHTML = '<strong class="text-blue-600">ATM or Bank Service System:</strong> ' + c.use_case_text.replace('ATM or Bank Service System: ', '');
+318	+
+  if (el('footer-student')) el('footer-student').textContent = c.student_name;
+319	+
+  if (el('footer-course')) el('footer-course').textContent = c.course_details;
+320	+
+}
+321	+
+322	+
+// Element SDK
+323	+
+window.elementSdk.init({
+324	+
+  defaultConfig,
+325	+
+  onConfigChange: async (config) => applyConfig(config),
+326	+
+  mapToCapabilities: (config) => ({
+327	+
+    recolorables: [],
+328	+
+    borderables: [],
+329	+
+    fontEditable: undefined,
+330	+
+    fontSizeable: undefined
+331	+
+  }),
+332	+
+  mapToEditPanelValues: (config) => new Map([
+333	+
+    ['project_title', config.project_title || defaultConfig.project_title],
+334	+
+    ['concept_text', config.concept_text || defaultConfig.concept_text],
+335	+
+    ['use_case_text', config.use_case_text || defaultConfig.use_case_text],
+336	+
+    ['student_name', config.student_name || defaultConfig.student_name],
+337	+
+    ['course_details', config.course_details || defaultConfig.course_details]
+338	+
+  ])
+339	+
+});
+340	+
+341	+
+// Scroll reveal animation
+342	+
+const observer = new IntersectionObserver((entries) => {
+343	+
+  entries.forEach(entry => {
+344	+
+    if (entry.isIntersecting) {
+345	+
+      entry.target.classList.add('visible');
+346	+
+    }
+347	+
+  });
+348	+
+}, { threshold: 0.1 });
+349	+
+350	+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+351	+
+352	+
+lucide.createIcons();
+353	+
+</script>
+354	+
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9ea95f03a2853fea',t:'MTc3NTkwNDAwNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+355	+
+</html>
