@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+
+
+2	+
+<html>
+3	+
+<head>
+4	+
+<title>Smart Weather Dashboard</title>
+5	+
+6	+
+<style>
+7	+
+8	+
+body{
+9	+
+font-family:Segoe UI;
+10	+
+margin:0;
+11	+
+height:100vh;
+12	+
+display:flex;
+13	+
+flex-direction:column;
+14	+
+align-items:center;
+15	+
+justify-content:center;
+16	+
+transition:0.5s;
+17	+
+background:linear-gradient(135deg,#f6d365,#fda085);
+18	+
+}
+19	+
+20	+
+.dark{
+21	+
+background:#1e1e2f;
+22	+
+color:white;
+23	+
+}
+24	+
+25	+
+.container{
+26	+
+text-align:center;
+27	+
+}
+28	+
+29	+
+.card{
+30	+
+width:300px;
+31	+
+padding:30px;
+32	+
+border-radius:20px;
+33	+
+background:rgba(255,255,255,0.25);
+34	+
+backdrop-filter:blur(10px);
+35	+
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
+36	+
+transition:0.4s;
+37	+
+}
+38	+
+39	+
+.card:hover{
+40	+
+transform:scale(1.05);
+41	+
+}
+42	+
+43	+
+.temp{
+44	+
+font-size:48px;
+45	+
+font-weight:bold;
+46	+
+}
+47	+
+48	+
+.details{
+49	+
+margin-top:10px;
+50	+
+display:flex;
+51	+
+justify-content:space-between;
+52	+
+}
+53	+
+54	+
+button{
+55	+
+margin-top:20px;
+56	+
+padding:10px 20px;
+57	+
+border:none;
+58	+
+border-radius:10px;
+59	+
+cursor:pointer;
+60	+
+}
+61	+
+62	+
+select{
+63	+
+padding:10px;
+64	+
+border-radius:8px;
+65	+
+margin-bottom:20px;
+66	+
+}
+67	+
+68	+
+.sun{
+69	+
+animation:spin 8s linear infinite;
+70	+
+}
+71	+
+72	+
+@keyframes spin{
+73	+
+from{transform:rotate(0)}
+74	+
+to{transform:rotate(360deg)}
+75	+
+}
+76	+
+77	+
+</style>
+78	+
+</head>
+79	+
+80	+
+<body>
+81	+
+82	+
+<div class="container">
+83	+
+84	+
+<h1>🌦 Smart Weather Dashboard</h1>
+85	+
+86	+
+<select id="citySelect">
+87	+
+<option value="0">Pune</option>
+88	+
+<option value="1">Mumbai</option>
+89	+
+<option value="2">Delhi</option>
+90	+
+</select>
+91	+
+92	+
+<div class="card" id="weatherCard">
+93	+
+94	+
+<h2 id="city"></h2>
+95	+
+96	+
+<div class="temp" id="temp"></div>
+97	+
+98	+
+<div id="icon"></div>
+99	+
+100	+
+<div id="condition"></div>
+101	+
+102	+
+<div class="details">
+103	+
+<span id="humidity"></span>
+104	+
+<span id="wind"></span>
+105	+
+</div>
+106	+
+107	+
+</div>
+108	+
+109	+
+<button onclick="toggleMode()">Toggle Dark Mode</button>
+110	+
+111	+
+</div>
+112	+
+113	+
+<script>
+114	+
+115	+
+const weatherData=[
+116	+
+{
+117	+
+city:"Pune",
+118	+
+temp:"28°C",
+119	+
+condition:"Sunny",
+120	+
+icon:"☀️",
+121	+
+humidity:"45%",
+122	+
+wind:"10 km/h"
+123	+
+},
+124	+
+{
+125	+
+city:"Mumbai",
+126	+
+temp:"30°C",
+127	+
+condition:"Humid",
+128	+
+icon:"🌤️",
+129	+
+humidity:"70%",
+130	+
+wind:"12 km/h"
+131	+
+},
+132	+
+{
+133	+
+city:"Delhi",
+134	+
+temp:"25°C",
+135	+
+condition:"Cloudy",
+136	+
+icon:"☁️",
+137	+
+humidity:"50%",
+138	+
+wind:"8 km/h"
+139	+
+}
+140	+
+];
+141	+
+142	+
+const city=document.getElementById("city");
+143	+
+const temp=document.getElementById("temp");
+144	+
+const condition=document.getElementById("condition");
+145	+
+const humidity=document.getElementById("humidity");
+146	+
+const wind=document.getElementById("wind");
+147	+
+const icon=document.getElementById("icon");
+148	+
+149	+
+function updateWeather(index){
+150	+
+151	+
+const data=weatherData[index];
+152	+
+153	+
+city.innerText=data.city;
+154	+
+temp.innerText=data.temp;
+155	+
+condition.innerText=data.condition;
+156	+
+humidity.innerText="💧 "+data.humidity;
+157	+
+wind.innerText="🌬 "+data.wind;
+158	+
+icon.innerHTML="<div class='sun'>"+data.icon+"</div>";
+159	+
+160	+
+}
+161	+
+162	+
+document.getElementById("citySelect").addEventListener("change",(e)=>{
+163	+
+updateWeather(e.target.value);
+164	+
+});
+165	+
+166	+
+function toggleMode(){
+167	+
+document.body.classList.toggle("dark");
+168	+
+}
+169	+
+170	+
+updateWeather(0);
+171	+
+172	+
+</script>
+173	+
+174	+
+</body>
+175	+
+</html>
